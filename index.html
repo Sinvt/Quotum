@@ -38,6 +38,11 @@
     --input-color: #f0e6d3;
     --overlay-bg: rgba(0,0,0,0.65);
     --fav-active: #ff6b8a;
+    --tab-active-bg: rgba(255,255,255,0.12);
+    --tab-hover-bg: rgba(255,255,255,0.06);
+    --eco-accent: rgba(76,175,80,0.6);
+    --eco-border: rgba(76,175,80,0.15);
+    --api-border: rgba(100,200,255,0.15);
   }
 
   body.light {
@@ -70,6 +75,8 @@
     --input-border: rgba(0,0,0,0.1);
     --input-color: #3a3028;
     --overlay-bg: rgba(0,0,0,0.4);
+    --tab-active-bg: rgba(0,0,0,0.08);
+    --tab-hover-bg: rgba(0,0,0,0.04);
   }
 
   body {
@@ -81,7 +88,7 @@
     background-attachment: fixed;
     font-family: 'Georgia', 'Noto Serif SC', 'STSong', serif;
     transition: background 0.8s ease;
-    padding: 40px 0;
+    padding: 40px 0 60px;
   }
 
   .top-bar {
@@ -94,63 +101,54 @@
   }
 
   .btn-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
+    width: 38px; height: 38px; border-radius: 50%;
     border: 1px solid var(--btn-ghost-border);
-    background: var(--card-bg);
-    color: var(--btn-ghost-color);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    font-family: inherit;
+    background: var(--card-bg); color: var(--btn-ghost-color);
+    font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease; font-family: inherit;
   }
 
-  .btn-icon:hover {
-    border-color: var(--btn-border);
-    color: var(--btn-color);
+  .btn-icon:hover { border-color: var(--btn-border); color: var(--btn-color); }
+
+  .tab-bar {
+    display: flex; gap: 4px;
+    background: var(--card-bg);
+    border: 1px solid var(--btn-ghost-border);
+    border-radius: 40px; padding: 4px;
+    margin-bottom: 10px; margin-top: 16px;
   }
+
+  .tab-btn {
+    padding: 10px 28px; border-radius: 36px; border: none;
+    background: transparent; color: var(--btn-ghost-color);
+    font-family: inherit; font-size: 0.88rem; cursor: pointer;
+    letter-spacing: 0.05em; transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { background: var(--tab-hover-bg); color: var(--btn-color); }
+  .tab-btn.active { background: var(--tab-active-bg); color: var(--text-cn); font-weight: bold; }
 
   .container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    margin-top: 10px;
+    width: 100%; display: flex; flex-direction: column;
+    align-items: center; gap: 24px; margin-top: 10px;
   }
 
   .card {
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--card-border);
-    border-radius: 24px;
-    padding: 50px 50px 20px;
-    max-width: 620px;
-    width: 90%;
-    text-align: center;
-    box-shadow: var(--card-shadow);
-    animation: fadeIn 0.5s ease;
-    position: relative;
+    background: var(--card-bg); backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border); border-radius: 24px;
+    padding: 50px 50px 20px; max-width: 620px; width: 90%;
+    text-align: center; box-shadow: var(--card-shadow);
+    animation: fadeIn 0.5s ease; position: relative;
   }
 
   .card .fav-btn {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    opacity: 0.35;
-    transition: all 0.25s;
-    color: var(--text-cn);
-    font-family: inherit;
-    padding: 4px 8px;
-    border-radius: 20px;
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; font-size: 1.25rem;
+    cursor: pointer; opacity: 0.35; transition: all 0.25s;
+    color: var(--text-cn); font-family: inherit;
+    padding: 4px 8px; border-radius: 20px;
   }
 
   .card .fav-btn:hover { opacity: 0.8; transform: scale(1.15); }
@@ -162,12 +160,9 @@
   }
 
   .card .badge {
-    display: inline-block;
-    color: var(--badge-color);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
+    display: inline-block; color: var(--badge-color);
+    font-size: 0.7rem; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 10px;
   }
 
   @keyframes fadeIn {
@@ -176,370 +171,171 @@
   }
 
   .divider {
-    width: 40px;
-    height: 3px;
-    background: var(--divider-bg);
-    margin: 28px auto;
-    border-radius: 2px;
+    width: 40px; height: 3px; background: var(--divider-bg);
+    margin: 28px auto; border-radius: 2px;
   }
 
-  .quote-cn {
-    color: var(--text-cn);
-    font-size: 1.45rem;
-    line-height: 2;
-    letter-spacing: 0.04em;
-  }
+  .quote-cn { color: var(--text-cn); font-size: 1.45rem; line-height: 2; letter-spacing: 0.04em; }
+  .quote-en { color: var(--text-en); font-size: 1.05rem; line-height: 1.8; margin-top: 18px; font-style: italic; }
+  .author { color: var(--text-author); margin-top: 32px; font-size: 0.9rem; letter-spacing: 0.08em; }
+  .author-info { color: var(--text-info); font-size: 0.68rem; margin-top: 8px; line-height: 1.6; letter-spacing: 0.04em; max-width: 400px; margin-left: auto; margin-right: auto; padding-bottom: 16px; }
 
-  .quote-en {
-    color: var(--text-en);
-    font-size: 1.05rem;
-    line-height: 1.8;
-    margin-top: 18px;
-    font-style: italic;
-  }
-
-  .author {
-    color: var(--text-author);
-    margin-top: 32px;
-    font-size: 0.9rem;
-    letter-spacing: 0.08em;
-  }
-
-  .author-info {
-    color: var(--text-info);
-    font-size: 0.68rem;
-    margin-top: 8px;
-    line-height: 1.6;
-    letter-spacing: 0.04em;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-bottom: 16px;
-  }
-
-  .date {
-    color: var(--text-date);
-    margin-top: 14px;
-    font-size: 0.78rem;
-    transition: color 0.5s;
-  }
+  .date { color: var(--text-date); margin-top: 14px; font-size: 0.78rem; transition: color 0.5s; }
 
   .btn-more {
-    display: inline-block;
-    background: var(--btn-bg);
-    border: 1px solid var(--btn-border);
-    color: var(--btn-color);
-    padding: 12px 36px;
-    border-radius: 40px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.06em;
-    transition: all 0.3s ease;
-    margin-top: 28px;
+    display: inline-block; background: var(--btn-bg);
+    border: 1px solid var(--btn-border); color: var(--btn-color);
+    padding: 12px 36px; border-radius: 40px; font-size: 0.9rem;
+    cursor: pointer; font-family: inherit; letter-spacing: 0.06em;
+    transition: all 0.3s ease; margin-top: 28px;
   }
 
-  .btn-more:hover {
-    background: var(--card-bg);
-    border-color: var(--btn-ghost-border);
-  }
-
+  .btn-more:hover { background: var(--card-bg); }
   .btn-more:active { transform: scale(0.96); }
+  .btn-more:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .stats {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    margin-top: 16px;
-  }
+  .stats { color: var(--text-muted); font-size: 0.75rem; margin-top: 16px; }
 
   .btn-history, .btn-fav-panel {
-    display: inline-block;
-    background: none;
-    border: 1px solid var(--btn-ghost-border);
-    color: var(--btn-ghost-color);
-    padding: 8px 24px;
-    border-radius: 40px;
-    font-size: 0.78rem;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.06em;
-    transition: all 0.3s ease;
-    margin-top: 12px;
+    display: inline-block; background: none;
+    border: 1px solid var(--btn-ghost-border); color: var(--btn-ghost-color);
+    padding: 8px 24px; border-radius: 40px; font-size: 0.78rem;
+    cursor: pointer; font-family: inherit; letter-spacing: 0.06em;
+    transition: all 0.3s ease; margin-top: 12px;
   }
 
   .btn-history:hover, .btn-fav-panel:hover {
-    background: var(--card-bg);
-    border-color: var(--btn-border);
-    color: var(--btn-color);
+    background: var(--card-bg); border-color: var(--btn-border); color: var(--btn-color);
   }
 
   .btn-fav-panel { margin-bottom: 6px; }
 
-  .panel {
-    max-width: 620px;
-    width: 90%;
-    display: none;
-    flex-direction: column;
-    gap: 16px;
-  }
-
+  .panel { max-width: 620px; width: 90%; display: none; flex-direction: column; gap: 16px; }
   .panel.open { display: flex; }
 
   .history-card {
-    background: var(--history-card-bg);
-    border: 1px solid var(--history-card-border);
-    border-radius: 18px;
-    padding: 28px 32px 18px;
-    text-align: center;
-    animation: fadeIn 0.4s ease;
-    position: relative;
+    background: var(--history-card-bg); border: 1px solid var(--history-card-border);
+    border-radius: 18px; padding: 28px 32px 18px; text-align: center;
+    animation: fadeIn 0.4s ease; position: relative;
   }
 
   .history-card .fav-btn {
-    position: absolute;
-    top: 10px;
-    right: 16px;
-    background: none;
-    border: none;
-    font-size: 1.05rem;
-    cursor: pointer;
-    opacity: 0.3;
-    transition: all 0.25s;
-    color: var(--text-cn);
-    font-family: inherit;
-    padding: 2px 6px;
-    border-radius: 20px;
+    position: absolute; top: 10px; right: 16px;
+    background: none; border: none; font-size: 1.05rem;
+    cursor: pointer; opacity: 0.3; transition: all 0.25s;
+    color: var(--text-cn); font-family: inherit;
+    padding: 2px 6px; border-radius: 20px;
   }
 
   .history-card .fav-btn:hover { opacity: 0.7; }
   .history-card .fav-btn.faved { opacity: 1; color: var(--fav-active); }
 
-  .history-date {
-    color: var(--text-date);
-    font-size: 0.72rem;
-    margin-bottom: 12px;
-    letter-spacing: 0.08em;
-  }
-
+  .history-date { color: var(--text-date); font-size: 0.72rem; margin-bottom: 12px; letter-spacing: 0.08em; }
   .history-card .quote-cn { font-size: 1.15rem; line-height: 1.9; }
   .history-card .quote-en { font-size: 0.9rem; }
   .history-card .author { margin-top: 18px; font-size: 0.78rem; }
   .history-card .author-info { color: var(--text-muted); font-size: 0.62rem; margin-top: 6px; padding-bottom: 0; }
 
-  .panel-empty {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-align: center;
-    padding: 20px;
-  }
+  .panel-empty { color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px; }
 
   .btn-add {
-    display: inline-block;
-    background: none;
-    border: 1px solid var(--btn-ghost-border);
-    color: var(--btn-ghost-color);
-    padding: 8px 24px;
-    border-radius: 40px;
-    font-size: 0.78rem;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.06em;
-    transition: all 0.3s ease;
-    margin-top: 8px;
+    display: inline-block; background: none;
+    border: 1px solid var(--btn-ghost-border); color: var(--btn-ghost-color);
+    padding: 8px 24px; border-radius: 40px; font-size: 0.78rem;
+    cursor: pointer; font-family: inherit; letter-spacing: 0.06em;
+    transition: all 0.3s ease; margin-top: 8px;
   }
 
-  .btn-add:hover {
-    background: var(--card-bg);
-    border-color: var(--btn-border);
-    color: var(--btn-color);
-  }
+  .btn-add:hover { background: var(--card-bg); border-color: var(--btn-border); color: var(--btn-color); }
 
   .overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--overlay-bg);
-    backdrop-filter: blur(6px);
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
+    display: none; position: fixed; inset: 0;
+    background: var(--overlay-bg); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center; z-index: 100;
   }
 
   .overlay.open { display: flex; }
 
   .form-card {
-    background: var(--form-bg);
-    border: 1px solid var(--form-border);
-    border-radius: 20px;
-    padding: 36px 32px;
-    max-width: 440px;
-    width: 90%;
-    animation: fadeIn 0.3s ease;
+    background: var(--form-bg); border: 1px solid var(--form-border);
+    border-radius: 20px; padding: 36px 32px; max-width: 440px;
+    width: 90%; animation: fadeIn 0.3s ease;
   }
 
-  .form-card h3 {
-    color: var(--text-cn);
-    font-size: 1rem;
-    font-weight: normal;
-    letter-spacing: 0.06em;
-    margin-bottom: 24px;
-    text-align: center;
-  }
-
-  .form-card label {
-    display: block;
-    color: var(--text-author);
-    font-size: 0.72rem;
-    margin-bottom: 6px;
-    margin-top: 14px;
-    letter-spacing: 0.04em;
-  }
-
+  .form-card h3 { color: var(--text-cn); font-size: 1rem; font-weight: normal; letter-spacing: 0.06em; margin-bottom: 24px; text-align: center; }
+  .form-card label { display: block; color: var(--text-author); font-size: 0.72rem; margin-bottom: 6px; margin-top: 14px; letter-spacing: 0.04em; }
   .form-card label:first-of-type { margin-top: 0; }
-
   .form-card input, .form-card textarea {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    color: var(--input-color);
-    font-family: inherit;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.2s;
-    resize: vertical;
+    width: 100%; background: var(--input-bg); border: 1px solid var(--input-border);
+    border-radius: 10px; padding: 10px 14px; color: var(--input-color);
+    font-family: inherit; font-size: 0.88rem; outline: none;
+    transition: border-color 0.2s; resize: vertical;
   }
-
   .form-card input:focus, .form-card textarea:focus { border-color: var(--btn-border); }
   .form-card textarea { min-height: 70px; line-height: 1.6; }
-
   .form-btns { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
-
-  .form-btns button {
-    padding: 9px 24px; border-radius: 30px; font-family: inherit;
-    font-size: 0.82rem; cursor: pointer; letter-spacing: 0.05em; transition: all 0.2s;
-  }
-
-  .btn-cancel {
-    background: none; border: 1px solid var(--btn-ghost-border); color: var(--btn-ghost-color);
-  }
-
-  .btn-save {
-    background: var(--btn-bg); border: 1px solid var(--btn-border); color: var(--text-cn);
-  }
-
+  .form-btns button { padding: 9px 24px; border-radius: 30px; font-family: inherit; font-size: 0.82rem; cursor: pointer; letter-spacing: 0.05em; transition: all 0.2s; }
+  .btn-cancel { background: none; border: 1px solid var(--btn-ghost-border); color: var(--btn-ghost-color); }
+  .btn-save { background: var(--btn-bg); border: 1px solid var(--btn-border); color: var(--text-cn); }
   .btn-save:hover { background: var(--card-bg); }
 
   .tag-custom {
-    display: inline-block;
-    background: rgba(100,200,255,0.12);
-    color: rgba(100,200,255,0.6);
+    display: inline-block; background: rgba(100,200,255,0.12); color: rgba(100,200,255,0.6);
     font-size: 0.62rem; padding: 2px 10px; border-radius: 20px;
     letter-spacing: 0.08em; margin-left: 8px; vertical-align: middle;
   }
 
-  .tag-faved {
-    display: inline-block;
-    color: var(--fav-active);
-    font-size: 0.9rem;
-    margin-left: 4px;
-    vertical-align: middle;
-  }
-
   .search-bar {
-    max-width: 620px;
-    width: 90%;
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-    margin-top: 16px;
+    max-width: 620px; width: 90%; display: flex; gap: 8px; margin-bottom: 4px; margin-top: 4px;
   }
 
   .search-bar input {
-    flex: 1;
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: 30px;
-    padding: 10px 20px;
-    color: var(--input-color);
-    font-family: inherit;
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1; background: var(--input-bg); border: 1px solid var(--input-border);
+    border-radius: 30px; padding: 10px 20px; color: var(--input-color);
+    font-family: inherit; font-size: 0.85rem; outline: none; transition: border-color 0.2s;
   }
 
   .search-bar input:focus { border-color: var(--btn-border); }
 
   .btn-search, .btn-fetch {
-    white-space: nowrap;
-    background: var(--btn-bg);
-    border: 1px solid var(--btn-border);
-    color: var(--btn-color);
-    padding: 10px 18px;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.04em;
-    transition: all 0.3s ease;
+    white-space: nowrap; background: var(--btn-bg);
+    border: 1px solid var(--btn-border); color: var(--btn-color);
+    padding: 10px 18px; border-radius: 30px; font-size: 0.8rem;
+    cursor: pointer; font-family: inherit; letter-spacing: 0.04em; transition: all 0.3s ease;
   }
 
   .btn-search:hover, .btn-fetch:hover { background: var(--card-bg); }
 
-  .btn-fetch {
-    display: block;
-    margin: 0 auto;
-    padding: 10px 28px;
-    font-size: 0.82rem;
-  }
-
   .spinner {
-    display: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--btn-ghost-border);
-    border-top-color: var(--btn-color);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin: 0 auto;
+    display: none; width: 20px; height: 20px;
+    border: 2px solid var(--btn-ghost-border); border-top-color: var(--btn-color);
+    border-radius: 50%; animation: spin 0.7s linear infinite; margin: 4px auto;
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .api-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(100,200,255,0.15);
-    border-radius: 24px;
-    padding: 50px 50px 20px;
-    max-width: 620px;
-    width: 90%;
-    text-align: center;
-    box-shadow: var(--card-shadow);
-    animation: fadeIn 0.5s ease;
-    position: relative;
+    background: var(--card-bg); backdrop-filter: blur(20px);
+    border: 1px solid var(--api-border); border-radius: 24px;
+    padding: 50px 50px 20px; max-width: 620px; width: 90%;
+    text-align: center; box-shadow: var(--card-shadow);
+    animation: fadeIn 0.5s ease; position: relative;
   }
 
   .api-card .badge {
-    display: inline-block;
-    color: rgba(100,200,255,0.6);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
+    display: inline-block; color: rgba(100,200,255,0.6);
+    font-size: 0.7rem; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 10px;
   }
 
   .api-card .quote-cn { font-size: 1.2rem; line-height: 1.9; }
   .api-card .quote-en { font-size: 0.95rem; }
   .api-card .author { margin-top: 24px; }
 
-  .search-hint {
-    color: var(--text-muted);
-    font-size: 0.72rem;
-    text-align: center;
-    margin-top: 4px;
-  }
+  .search-hint { color: var(--text-muted); font-size: 0.72rem; text-align: center; margin-top: 2px; margin-bottom: 8px; }
+
+  .eco-card { border-left: 3px solid var(--eco-border); }
+  .eco-card .badge { color: var(--eco-accent); }
 </style>
 </head>
 <body>
@@ -547,6 +343,11 @@
 <div class="top-bar">
   <button class="btn-icon" id="btnTheme" onclick="toggleTheme()" title="切换日间/夜间模式">🌙</button>
   <button class="btn-icon" id="btnFavToggle" onclick="toggleFavorites()" title="收藏夹">❤️</button>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabQuotes" onclick="switchMode('quotes')">💬 名言</button>
+  <button class="tab-btn" id="tabEco" onclick="switchMode('economics')">📈 经济学</button>
 </div>
 
 <div class="search-bar">
@@ -558,29 +359,27 @@
 <div class="search-hint" id="searchHint"></div>
 <div class="spinner" id="spinner"></div>
 
-<div class="container" id="container">
-  <div class="card daily" id="dailyCard"></div>
-</div>
+<div class="container" id="container"></div>
 
 <div class="date" id="dateDisplay"></div>
 <button class="btn-more" id="btnMore" onclick="addMoreQuotes()">+ 再来一条</button>
-<div class="stats" id="stats">共 1 条</div>
+<div class="stats" id="stats"></div>
 <button class="btn-history" onclick="toggleHistory()">📅 历史记录</button>
-<button class="btn-add" onclick="openAddForm()">✏️ 添加名言</button>
+<button class="btn-add" onclick="openAddForm()">✏️ 添加条目</button>
 <button class="btn-fav-panel" onclick="toggleFavorites()">❤️ 我的收藏</button>
 <div class="panel" id="historyPanel"></div>
 <div class="panel" id="favPanel"></div>
 
 <div class="overlay" id="overlay">
   <div class="form-card">
-    <h3>添加名言</h3>
-    <label>中文名言</label>
-    <textarea id="inputCn" placeholder="输入中文名言..."></textarea>
-    <label>英文名言</label>
-    <textarea id="inputEn" placeholder="输入英文名言..."></textarea>
-    <label>作者</label>
+    <h3 id="formTitle">添加名言</h3>
+    <label>中文内容</label>
+    <textarea id="inputCn" placeholder="输入中文内容..."></textarea>
+    <label>英文内容</label>
+    <textarea id="inputEn" placeholder="输入英文内容..."></textarea>
+    <label id="labelAuthor">作者</label>
     <input id="inputAuthor" placeholder="输入作者名...">
-    <label>作者简介（选填）</label>
+    <label>简介（选填）</label>
     <input id="inputAuthorInfo" placeholder="如：法国作家，1915年诺贝尔文学奖得主...">
     <div class="form-btns">
       <button class="btn-cancel" onclick="closeAddForm()">取消</button>
@@ -590,104 +389,144 @@
 </div>
 
 <script>
-const quotes = [
-  { cn: "生如夏花之绚烂，死如秋叶之静美。", en: "Let life be beautiful like summer flowers and death like autumn leaves.", author: "泰戈尔 (Rabindranath Tagore)", authorInfo: "印度诗人、文学家，1913年诺贝尔文学奖得主，《飞鸟集》《吉檀迦利》作者" },
-  { cn: "世界上最宽阔的是海洋，比海洋更宽阔的是天空，比天空更宽阔的是人的心灵。", en: "There is a spectacle greater than the sea: it is the sky; there is a spectacle greater than the sky: it is the interior of the soul.", author: "雨果 (Victor Hugo)", authorInfo: "法国浪漫主义文学代表，《悲惨世界》《巴黎圣母院》作者" },
-  { cn: "黑夜无论怎样悠长，白昼总会到来。", en: "The night is long, but the day will come.", author: "莎士比亚 (William Shakespeare)", authorInfo: "英国文艺复兴时期最伟大的剧作家与诗人，代表作《哈姆雷特》《罗密欧与朱丽叶》" },
-  { cn: "人生的价值，并不是用时间，而是用深度去衡量的。", en: "The value of life lies not in the length of days, but in the use we make of them.", author: "蒙田 (Michel de Montaigne)", authorInfo: "法国文艺复兴时期思想家、散文家，《随笔集》开创了随笔这一文学体裁" },
-  { cn: "千里之行，始于足下。", en: "A journey of a thousand miles begins with a single step.", author: "老子 (Lao Tzu)", authorInfo: "中国古代思想家、哲学家，道家学派创始人，《道德经》作者" },
-  { cn: "世上只有一种真正的英雄主义，那就是在认清生活真相之后依然热爱生活。", en: "There is only one heroism in the world: to see the world as it is and to love it.", author: "罗曼·罗兰 (Romain Rolland)", authorInfo: "法国作家、音乐评论家，1915年诺贝尔文学奖得主，《约翰·克利斯朵夫》作者" },
-  { cn: "天行健，君子以自强不息。", en: "As Heaven's movement is ever vigorous, so must a gentleman ceaselessly strive along.", author: "《周易》", authorInfo: "中国古代哲学经典，被誉为「群经之首，大道之源」，成书于西周至春秋时期" },
-  { cn: "我们最真实的一面，就是我们害怕去尝试的那一面。", en: "Our deepest fear is not that we are inadequate. Our deepest fear is that we are powerful beyond measure.", author: "玛丽安·威廉姆森 (Marianne Williamson)", authorInfo: "美国作家、精神导师，《回归至爱》作者，致力于心灵成长与社会公益" },
-  { cn: "不要努力去做一个成功的人，而要努力去做一个有价值的人。", en: "Try not to become a man of success, but rather try to become a man of value.", author: "爱因斯坦 (Albert Einstein)", authorInfo: "德裔美籍物理学家，相对论创立者，1921年诺贝尔物理学奖得主" },
-  { cn: "过去属于死神，未来属于你自己。", en: "The past is for death, the future belongs to you.", author: "雪莱 (Percy Bysshe Shelley)", authorInfo: "英国浪漫主义诗人，《西风颂》《解放了的普罗米修斯》作者" },
-  { cn: "生活就像一盒巧克力，你永远不知道下一颗是什么味道。", en: "Life is like a box of chocolates. You never know what you're gonna get.", author: "《阿甘正传》", authorInfo: "1994年美国经典电影，由罗伯特·泽米吉斯执导，汤姆·汉克斯主演" },
-  { cn: "弱者坐待时机，强者创造时机。", en: "Weak men wait for opportunities; strong men make them.", author: "居里夫人 (Marie Curie)", authorInfo: "波兰裔法国科学家，首位两获诺贝尔奖的伟人，放射性研究的先驱" },
-  { cn: "一个人可以被毁灭，但不能被打败。", en: "A man can be destroyed but not defeated.", author: "海明威 (Ernest Hemingway)", authorInfo: "美国作家、记者，1954年诺贝尔文学奖得主，《老人与海》作者" },
-  { cn: "只有用心灵才能看得清，本质的东西，眼睛是看不见的。", en: "It is only with the heart that one can see rightly; what is essential is invisible to the eye.", author: "圣埃克苏佩里《小王子》", authorInfo: "法国作家、飞行员，1943年出版的《小王子》被译成300多种语言" },
-  { cn: "知行合一。", en: "Knowledge is the beginning of practice; doing is the completion of knowing.", author: "王阳明", authorInfo: "明代思想家、军事家，「心学」集大成者，主张知行合一、致良知" },
-  { cn: "如果你因失去了太阳而流泪，那么你也将失去群星了。", en: "If you shed tears when you miss the sun, you also miss the stars.", author: "泰戈尔 (Rabindranath Tagore)", authorInfo: "印度诗人、文学家，1913年诺贝尔文学奖得主，《飞鸟集》《吉檀迦利》作者" },
-  { cn: "不积跬步，无以至千里；不积小流，无以成江海。", en: "Without accumulating small steps, one cannot reach a thousand miles; without gathering small streams, one cannot form a river or sea.", author: "荀子", authorInfo: "战国末期思想家、教育家，儒家代表人物，提出「性恶论」与「礼法并重」" },
-  { cn: "一个人的命运，决定于晚上8点到10点之间。", en: "The future belongs to those who believe in the beauty of their dreams.", author: "埃莉诺·罗斯福 (Eleanor Roosevelt)", authorInfo: "美国第32任总统富兰克林·罗斯福之妻，人权活动家、外交官" },
-  { cn: "我思故我在。", en: "I think, therefore I am.", author: "笛卡尔 (René Descartes)", authorInfo: "法国哲学家、数学家，近代哲学之父，解析几何的奠基人" },
-  { cn: "路漫漫其修远兮，吾将上下而求索。", en: "The way ahead is long and winding, yet I will search high and low for what I seek.", author: "屈原", authorInfo: "战国时期楚国诗人、政治家，《离骚》《九歌》作者，楚辞的创立者" },
-  { cn: "想象力比知识更重要。", en: "Imagination is more important than knowledge.", author: "爱因斯坦 (Albert Einstein)", authorInfo: "德裔美籍物理学家，相对论创立者，1921年诺贝尔物理学奖得主" },
-  { cn: "勇敢并非没有恐惧，而是战胜恐惧。", en: "Courage is not the absence of fear, but the triumph over it.", author: "曼德拉 (Nelson Mandela)", authorInfo: "南非反种族隔离革命家，南非首位黑人总统，1993年诺贝尔和平奖得主" },
-  { cn: "海纳百川，有容乃大。", en: "The ocean accepts all rivers; greatness comes from embracing all.", author: "林则徐", authorInfo: "清代政治家、思想家，虎门销烟的民族英雄，近代中国「开眼看世界第一人」" },
-  { cn: "你要保守你心，胜过保守一切，因为一生的果效是由心发出。", en: "Above all else, guard your heart, for everything you do flows from it.", author: "《圣经·箴言》", authorInfo: "《圣经》旧约中的智慧书卷，相传主要为所罗门王所著，汇集人生格言" },
-  { cn: "真正重要的东西，用眼睛是看不见的。", en: "What is essential is invisible to the eye.", author: "圣埃克苏佩里 (Antoine de Saint-Exupéry)", authorInfo: "法国作家、飞行员，1943年出版的《小王子》被译成300多种语言" },
-  { cn: "活着就是为了改变世界。", en: "The people who are crazy enough to think they can change the world are the ones who do.", author: "乔布斯 (Steve Jobs)", authorInfo: "美国企业家、发明家，苹果公司联合创始人，改变了个人电脑与手机产业" },
-  { cn: "业精于勤，荒于嬉；行成于思，毁于随。", en: "Excellence comes from diligence, waste from playfulness; deeds are formed by thought, destroyed by carelessness.", author: "韩愈", authorInfo: "唐代文学家、思想家，「唐宋八大家」之首，古文运动的倡导者" },
-  { cn: "不是因为事情太难我们才不敢做，而是因为我们不敢做，事情才变得难。", en: "It is not because things are difficult that we do not dare; it is because we do not dare that they are difficult.", author: "塞内卡 (Seneca)", authorInfo: "古罗马斯多葛学派哲学家、剧作家，尼禄皇帝的老师" },
-  { cn: "先天下之忧而忧，后天下之乐而乐。", en: "Be the first to bear the world's troubles, and the last to enjoy its pleasures.", author: "范仲淹", authorInfo: "北宋政治家、文学家，《岳阳楼记》作者，以天下为己任的士大夫典范" },
-  { cn: "幸福不在于拥有多少，而在于珍惜你所拥有的。", en: "Happiness is not about having everything, but about making the most of what you have.", author: "佚名 (Anonymous)", authorInfo: "" }
+// ======== 数据 ========
+const quotesData = [
+  { cn:"生如夏花之绚烂，死如秋叶之静美。", en:"Let life be beautiful like summer flowers and death like autumn leaves.", author:"泰戈尔 (Rabindranath Tagore)", authorInfo:"印度诗人、文学家，1913年诺贝尔文学奖得主" },
+  { cn:"世界上最宽阔的是海洋，比海洋更宽阔的是天空，比天空更宽阔的是人的心灵。", en:"There is a spectacle greater than the sea: it is the sky; there is a spectacle greater than the sky: it is the interior of the soul.", author:"雨果 (Victor Hugo)", authorInfo:"法国浪漫主义文学代表，《悲惨世界》《巴黎圣母院》作者" },
+  { cn:"黑夜无论怎样悠长，白昼总会到来。", en:"The night is long, but the day will come.", author:"莎士比亚 (William Shakespeare)", authorInfo:"英国文艺复兴时期最伟大的剧作家与诗人" },
+  { cn:"人生的价值，并不是用时间，而是用深度去衡量的。", en:"The value of life lies not in the length of days, but in the use we make of them.", author:"蒙田 (Michel de Montaigne)", authorInfo:"法国文艺复兴时期思想家、散文家" },
+  { cn:"千里之行，始于足下。", en:"A journey of a thousand miles begins with a single step.", author:"老子 (Lao Tzu)", authorInfo:"中国古代思想家，道家学派创始人，《道德经》作者" },
+  { cn:"世上只有一种真正的英雄主义，那就是在认清生活真相之后依然热爱生活。", en:"There is only one heroism in the world: to see the world as it is and to love it.", author:"罗曼·罗兰 (Romain Rolland)", authorInfo:"法国作家，1915年诺贝尔文学奖得主" },
+  { cn:"天行健，君子以自强不息。", en:"As Heaven's movement is ever vigorous, so must a gentleman ceaselessly strive along.", author:"《周易》", authorInfo:"中国古代哲学经典，「群经之首，大道之源」" },
+  { cn:"不要努力去做一个成功的人，而要努力去做一个有价值的人。", en:"Try not to become a man of success, but rather try to become a man of value.", author:"爱因斯坦 (Albert Einstein)", authorInfo:"德裔美籍物理学家，相对论创立者，1921年诺贝尔奖得主" },
+  { cn:"过去属于死神，未来属于你自己。", en:"The past is for death, the future belongs to you.", author:"雪莱 (Percy Bysshe Shelley)", authorInfo:"英国浪漫主义诗人，《西风颂》作者" },
+  { cn:"生活就像一盒巧克力，你永远不知道下一颗是什么味道。", en:"Life is like a box of chocolates. You never know what you're gonna get.", author:"《阿甘正传》", authorInfo:"1994年美国经典电影，汤姆·汉克斯主演" },
+  { cn:"弱者坐待时机，强者创造时机。", en:"Weak men wait for opportunities; strong men make them.", author:"居里夫人 (Marie Curie)", authorInfo:"波兰裔法国科学家，首位两获诺贝尔奖的伟人" },
+  { cn:"一个人可以被毁灭，但不能被打败。", en:"A man can be destroyed but not defeated.", author:"海明威 (Ernest Hemingway)", authorInfo:"美国作家，1954年诺贝尔文学奖得主，《老人与海》作者" },
+  { cn:"只有用心灵才能看得清，本质的东西，眼睛是看不见的。", en:"It is only with the heart that one can see rightly; what is essential is invisible to the eye.", author:"圣埃克苏佩里《小王子》", authorInfo:"法国作家、飞行员，《小王子》被译成300多种语言" },
+  { cn:"知行合一。", en:"Knowledge is the beginning of practice; doing is the completion of knowing.", author:"王阳明", authorInfo:"明代思想家、军事家，「心学」集大成者" },
+  { cn:"如果你因失去了太阳而流泪，那么你也将失去群星了。", en:"If you shed tears when you miss the sun, you also miss the stars.", author:"泰戈尔 (Rabindranath Tagore)", authorInfo:"印度诗人、文学家，1913年诺贝尔文学奖得主" },
+  { cn:"不积跬步，无以至千里；不积小流，无以成江海。", en:"Without accumulating small steps, one cannot reach a thousand miles.", author:"荀子", authorInfo:"战国末期思想家，儒家代表人物" },
+  { cn:"我思故我在。", en:"I think, therefore I am.", author:"笛卡尔 (René Descartes)", authorInfo:"法国哲学家、数学家，近代哲学之父" },
+  { cn:"路漫漫其修远兮，吾将上下而求索。", en:"The way ahead is long and winding, yet I will search high and low.", author:"屈原", authorInfo:"战国时期楚国诗人，《离骚》《九歌》作者" },
+  { cn:"想象力比知识更重要。", en:"Imagination is more important than knowledge.", author:"爱因斯坦 (Albert Einstein)", authorInfo:"德裔美籍物理学家，相对论创立者" },
+  { cn:"勇敢并非没有恐惧，而是战胜恐惧。", en:"Courage is not the absence of fear, but the triumph over it.", author:"曼德拉 (Nelson Mandela)", authorInfo:"南非首位黑人总统，1993年诺贝尔和平奖得主" },
+  { cn:"海纳百川，有容乃大。", en:"The ocean accepts all rivers; greatness comes from embracing all.", author:"林则徐", authorInfo:"清代政治家，虎门销烟的民族英雄" },
+  { cn:"活着就是为了改变世界。", en:"The people who are crazy enough to think they can change the world are the ones who do.", author:"乔布斯 (Steve Jobs)", authorInfo:"美国企业家，苹果公司联合创始人" },
+  { cn:"业精于勤，荒于嬉；行成于思，毁于随。", en:"Excellence comes from diligence, waste from playfulness.", author:"韩愈", authorInfo:"唐代文学家，「唐宋八大家」之首" },
+  { cn:"不是因为事情太难我们才不敢做，而是因为我们不敢做，事情才变得难。", en:"It is not because things are difficult that we do not dare.", author:"塞内卡 (Seneca)", authorInfo:"古罗马斯多葛学派哲学家、剧作家" },
+  { cn:"先天下之忧而忧，后天下之乐而乐。", en:"Be the first to bear the world's troubles, and the last to enjoy its pleasures.", author:"范仲淹", authorInfo:"北宋政治家、文学家，《岳阳楼记》作者" },
+  { cn:"幸福不在于拥有多少，而在于珍惜你所拥有的。", en:"Happiness is not about having everything, but about making the most of what you have.", author:"佚名", authorInfo:"" },
+  { cn:"真正的发现之旅不在于寻找新风景，而在于拥有新的眼睛。", en:"The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.", author:"普鲁斯特 (Marcel Proust)", authorInfo:"法国作家，《追忆似水年华》作者" },
+  { cn:"人生最大的荣耀不在于从不跌倒，而在于每次跌倒后都能爬起来。", en:"The greatest glory in living lies not in never falling, but in rising every time we fall.", author:"曼德拉 (Nelson Mandela)", authorInfo:"南非首位黑人总统，反种族隔离斗士" },
+  { cn:"知之者不如好之者，好之者不如乐之者。", en:"They who know the truth are not equal to those who love it.", author:"孔子 (Confucius)", authorInfo:"中国古代思想家、教育家，儒家学派创始人" },
+  { cn:"世界是一本书，不旅行的人只读了其中一页。", en:"The world is a book and those who do not travel read only one page.", author:"奥古斯丁 (St. Augustine)", authorInfo:"古罗马神学家、哲学家，《忏悔录》作者" }
 ];
 
-// ======== 主题切换 ========
-const THEME_KEY = 'daily_quotes_theme';
-function loadTheme() {
-  return localStorage.getItem(THEME_KEY) || 'dark';
-}
+const economicsData = [
+  { cn:"看不见的手——市场通过个人自利行为，无意中促进了社会整体福利。", en:"The invisible hand — individuals pursuing their own self-interest unintentionally promote the welfare of society as a whole.", author:"亚当·斯密 (Adam Smith)", authorInfo:"苏格兰经济学家、哲学家，现代经济学之父，《国富论》作者" },
+  { cn:"机会成本：你放弃的次优选择，才是做任何事的真正成本。", en:"Opportunity cost: the true cost of anything is what you give up to get it — the next best alternative forgone.", author:"经济学基本原理", authorInfo:"经济学中最核心的概念之一，决策的本质是比较机会成本" },
+  { cn:"通货膨胀是一种无处不在的税收，许多人只有在收到账单时才注意到。", en:"Inflation is taxation without legislation — a hidden tax that erodes purchasing power.", author:"米尔顿·弗里德曼 (Milton Friedman)", authorInfo:"美国经济学家，芝加哥学派代表人物，1976年诺贝尔经济学奖得主" },
+  { cn:"贸易能让每个人过得更好——比较优势使得即使一国在所有方面都更高效，贸易仍互利。", en:"Trade can make everyone better off — comparative advantage means even if one party is more efficient in everything, trade still benefits both.", author:"大卫·李嘉图 (David Ricardo)", authorInfo:"英国古典经济学家，比较优势理论的奠基人" },
+  { cn:"供给与需求是经济学最基础的模型，价格由买卖双方的博弈决定。", en:"Supply and demand form the most fundamental model in economics — prices emerge from the interaction of buyers and sellers.", author:"阿尔弗雷德·马歇尔 (Alfred Marshall)", authorInfo:"英国经济学家，新古典经济学创始人，《经济学原理》作者" },
+  { cn:"GDP衡量的是一个国家的经济产出，但它不能衡量人民的幸福、健康或环境质量。", en:"GDP measures everything except that which makes life worthwhile.", author:"罗伯特·肯尼迪 (Robert F. Kennedy)", authorInfo:"美国政治家，批评单纯以GDP衡量国家发展的局限性" },
+  { cn:"边际效用递减：你吃第一块蛋糕时最快乐，吃到第五块时边际满足感几乎为零。", en:"Diminishing marginal utility — the first slice of cake brings the most joy; by the fifth, the marginal satisfaction approaches zero.", author:"经济学基本原理", authorInfo:"边际革命的核心概念，由杰文斯、门格尔、瓦尔拉斯等提出" },
+  { cn:"市场通常是一只看不见的手，但市场失灵时，政府需要伸出看得见的手。", en:"Markets are usually a good way to organize economic activity, but when they fail, government intervention may be needed.", author:"N.格里高利·曼昆 (N. Gregory Mankiw)", authorInfo:"美国经济学家，哈佛大学教授，《经济学原理》作者" },
+  { cn:"激励很重要——人们会对激励做出反应，政策设计必须考虑人们如何改变行为。", en:"People respond to incentives — the rest is commentary.", author:"史蒂芬·兰兹伯格 (Steven Landsburg)", authorInfo:"美国经济学家，《反常识经济学》作者" },
+  { cn:"货币的三个功能：交易媒介、计价单位、价值储藏。", en:"Money serves three functions: medium of exchange, unit of account, and store of value.", author:"经济学基本原理", authorInfo:"货币银行学的基石概念" },
+  { cn:"经济学的本质是研究稀缺性——如何在有限的资源下做出最优选择。", en:"Economics is the study of scarcity — how to make optimal choices with limited resources.", author:"莱昂内尔·罗宾斯 (Lionel Robbins)", authorInfo:"英国经济学家，伦敦政治经济学院教授" },
+  { cn:"股票市场就像一个投票机，但从长期来看它是一台称重机。", en:"In the short run, the market is a voting machine but in the long run, it is a weighing machine.", author:"本杰明·格雷厄姆 (Benjamin Graham)", authorInfo:"美国投资家，「价值投资之父」，巴菲特的精神导师" },
+  { cn:"最低工资法的讽刺在于：它旨在保护低收入工人，却可能导致一部分人失业。", en:"The irony of minimum wage laws: designed to protect low-income workers, they may cause some to lose their jobs entirely.", author:"经济学争议话题", authorInfo:"最低工资的就业效应是劳动经济学长期争论的焦点" },
+  { cn:"凯恩斯名言：从长期来看，我们都死了。", en:"In the long run we are all dead.", author:"约翰·梅纳德·凯恩斯 (John Maynard Keynes)", authorInfo:"英国经济学家，宏观经济学奠基人，凯恩斯主义创始人" },
+  { cn:"复利是世界第八大奇迹——懂得它的人赚取它，不懂的人支付它。", en:"Compound interest is the eighth wonder of the world. He who understands it, earns it; he who doesn't, pays it.", author:"阿尔伯特·爱因斯坦 (Albert Einstein)", authorInfo:"复利效应是投资与财富积累最强大的力量" },
+  { cn:"市场泡沫的规律：当出租车司机都在谈论股票时，你该退场了。", en:"When even shoe-shine boys are giving stock tips, it's time to get out of the market.", author:"约瑟夫·肯尼迪 (Joseph Kennedy)", authorInfo:"美国商人与政治家，在1929年大崩盘前成功逃顶" },
+  { cn:"贫穷不是缺少金钱，而是缺少选择的能力。", en:"Poverty is not just a lack of money; it is a deprivation of capabilities.", author:"阿马蒂亚·森 (Amartya Sen)", authorInfo:"印度经济学家，1998年诺贝尔经济学奖得主，福利经济学先驱" },
+  { cn:"一个国家的财富不是看它拥有多少黄金，而是看它的人民能创造多少价值。", en:"The wealth of a nation is not in its gold reserves, but in the productive capacity of its people.", author:"亚当·斯密 (Adam Smith)", authorInfo:"真正的国家财富是劳动生产率和人力资本" },
+  { cn:"外部性：当你的行为影响他人却没有为此付费或获得补偿时，市场就会失效。", en:"Externalities — when your actions affect others without you paying or being compensated, markets fail.", author:"阿瑟·庇古 (Arthur Pigou)", authorInfo:"英国经济学家，福利经济学创始人，提出庇古税治理污染" },
+  { cn:"博弈论中的囚徒困境说明：个人理性选择可能导致集体最差结果。", en:"The prisoner's dilemma shows that individually rational choices can lead to the worst collective outcome.", author:"约翰·纳什 (John Nash)", authorInfo:"美国数学家，博弈论大师，1994年诺贝尔经济学奖得主" },
+  { cn:"自由贸易使各国专注于自己擅长的领域，消费者以更低价格获得更多选择。", en:"Free trade allows nations to specialize in what they do best, giving consumers more choice at lower prices.", author:"经济学基本原理", authorInfo:"比较优势理论的延伸，国际贸易的核心逻辑" },
+  { cn:"经济衰退就像森林大火一样清理低效企业，为新的增长腾出空间——创造性破坏。", en:"Recessions, like forest fires, clear out inefficient firms and make room for new growth — creative destruction.", author:"约瑟夫·熊彼特 (Joseph Schumpeter)", authorInfo:"奥地利经济学家，提出「创造性破坏」理论" },
+  { cn:"富人越来越富不是因为聪明，而是因为资本回报率长期大于经济增长率。", en:"The rich get richer because the rate of return on capital consistently exceeds the rate of economic growth (r > g).", author:"托马斯·皮凯蒂 (Thomas Piketty)", authorInfo:"法国经济学家，《21世纪资本论》作者" },
+  { cn:"好制度让普通人也能做出好决策，坏制度让聪明人也束手无策。", en:"Good institutions enable ordinary people to make good decisions; bad institutions constrain even the brilliant.", author:"道格拉斯·诺斯 (Douglass North)", authorInfo:"美国经济学家，1993年诺贝尔奖得主，制度经济学大师" },
+  { cn:"经济学不会给你一套现成的答案，但会教你如何系统地思考问题。", en:"Economics doesn't give you a set of ready answers, but it teaches you a systematic way of thinking.", author:"N.格里高利·曼昆 (N. Gregory Mankiw)", authorInfo:"哈佛大学经济学教授，教科书中写道「经济学是一门思维方式」" },
+  { cn:"凡是稀缺的，必有经济学。", en:"Wherever there is scarcity, there is economics.", author:"经济学格言", authorInfo:"经济学的边界由稀缺性定义，几乎涵盖人类所有行为" },
+  { cn:"劣币驱逐良币——格雷欣法则。", en:"Bad money drives out good — Gresham's Law.", author:"托马斯·格雷欣 (Thomas Gresham)", authorInfo:"16世纪英国金融家，发现货币流通中的「劣币驱逐良币」现象" },
+  { cn:"风险与收益如同硬币的两面：没有免费的午餐，高回报意味着高风险。", en:"Risk and return are two sides of the same coin — there is no free lunch in investing.", author:"哈里·马科维茨 (Harry Markowitz)", authorInfo:"美国经济学家，现代投资组合理论创始人，1990年诺贝尔奖得主" },
+  { cn:"经济学不是关于金钱的科学，而是关于人类选择行为的科学。", en:"Economics is not a science of money; it is a science of human choice and behavior.", author:"路德维希·冯·米塞斯 (Ludwig von Mises)", authorInfo:"奥地利学派经济学家，《人的行为》作者" },
+  { cn:"一只蝴蝶在巴西扇动翅膀，可能在德克萨斯引起一场龙卷风——经济系统的蝴蝶效应。", en:"A butterfly flapping its wings in Brazil can cause a tornado in Texas — economic systems exhibit the butterfly effect.", author:"混沌理论应用于经济学", authorInfo:"经济系统是复杂的非线性系统，微小变化可能引发巨大后果" }
+];
+
+// ======== 主题 ========
+const THEME_KEY = 'quotum_theme';
+function loadTheme() { return localStorage.getItem(THEME_KEY) || 'dark'; }
 function saveTheme(t) { localStorage.setItem(THEME_KEY, t); }
 function applyTheme(t) {
-  if (t === 'light') {
-    document.body.classList.add('light');
-    document.getElementById('btnTheme').textContent = '☀️';
-  } else {
-    document.body.classList.remove('light');
-    document.getElementById('btnTheme').textContent = '🌙';
-  }
+  var isLight = t === 'light';
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('btnTheme').textContent = isLight ? '☀️' : '🌙';
 }
 function toggleTheme() {
-  const current = loadTheme();
-  const next = current === 'dark' ? 'light' : 'dark';
-  saveTheme(next);
-  applyTheme(next);
+  var next = loadTheme() === 'dark' ? 'light' : 'dark';
+  saveTheme(next); applyTheme(next);
 }
 applyTheme(loadTheme());
 
-// ======== 收藏夹 ========
-const FAV_KEY = 'daily_quotes_favorites';
+// ======== 当前模式 ========
+var currentMode = 'quotes'; // 'quotes' | 'economics'
+
+function getData() { return currentMode === 'economics' ? economicsData : quotesData; }
+
+function getStorageKeys() {
+  return {
+    history: currentMode === 'economics' ? 'quotum_eco_history' : 'quotum_quotes_history',
+    favorites: currentMode === 'economics' ? 'quotum_eco_favorites' : 'quotum_quotes_favorites',
+    seen: currentMode === 'economics' ? 'quotum_eco_seen' : 'quotum_quotes_seen'
+  };
+}
+
+function getBadgeLabel() { return currentMode === 'economics' ? '今日经济学' : '今日名言'; }
+function getSearchPlaceholder() {
+  return currentMode === 'economics'
+    ? '搜索经济学知识，如 supply demand、inflation、GDP...'
+    : '搜索名言关键字，如 love、courage、wisdom...';
+}
+function getFormTitle() { return currentMode === 'economics' ? '添加经济学知识' : '添加名言'; }
+function getFormLabel() { return currentMode === 'economics' ? '来源/出处' : '作者'; }
+function getEmptyHistoryMsg() { return currentMode === 'economics' ? '暂无历史记录，明天再来吧' : '暂无历史记录，明天再来吧'; }
+function getEmptyFavMsg() { return currentMode === 'economics' ? '还没有收藏，点击 ♡ 来收藏吧' : '还没有收藏的名言，点击 ♡ 来收藏吧'; }
+function getAddLabel() { return currentMode === 'economics' ? '✏️ 添加知识' : '✏️ 添加名言'; }
+function getHistoryLabel() { return '📅 历史记录'; }
+function getFavLabel() { return '❤️ 我的收藏'; }
+
+// ======== 收藏夹（按模式分别存储） ========
 function loadFavorites() {
-  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(getStorageKeys().favorites)) || []; } catch(e) { return []; }
 }
 function saveFavorites(favs) {
-  try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch {}
+  try { localStorage.setItem(getStorageKeys().favorites, JSON.stringify(favs)); } catch(e) {}
 }
-function isFaved(quote) {
-  const favs = loadFavorites();
-  return favs.some(f => f.cn === quote.cn);
-}
-function toggleFav(quote) {
-  const favs = loadFavorites();
-  const idx = favs.findIndex(f => f.cn === quote.cn);
-  if (idx >= 0) {
-    favs.splice(idx, 1);
-  } else {
-    favs.push({ cn: quote.cn, en: quote.en, author: quote.author, authorInfo: quote.authorInfo || '' });
-  }
+function isFaved(q) { return loadFavorites().some(function(f) { return f.cn === q.cn; }); }
+function toggleFav(q) {
+  var favs = loadFavorites();
+  var idx = favs.findIndex(function(f) { return f.cn === q.cn; });
+  if (idx >= 0) favs.splice(idx, 1);
+  else favs.push({ cn:q.cn, en:q.en, author:q.author, authorInfo:q.authorInfo||'' });
   saveFavorites(favs);
   refreshAllFavButtons();
   if (favPanelOpen) renderFavPanel();
 }
-function quoteKey(q) { return q.cn; }
-
-function makeFavBtn(quote) {
-  const btn = document.createElement('button');
-  btn.className = 'fav-btn' + (isFaved(quote) ? ' faved' : '');
-  btn.textContent = isFaved(quote) ? '❤️' : '♡';
-  btn.onclick = function(e) {
-    e.stopPropagation();
-    toggleFav(quote);
-  };
+function makeFavBtn(q) {
+  var btn = document.createElement('button');
+  btn.className = 'fav-btn' + (isFaved(q) ? ' faved' : '');
+  btn.textContent = isFaved(q) ? '❤️' : '♡';
+  btn.onclick = function(e) { e.stopPropagation(); toggleFav(q); };
   return btn;
 }
-
 function refreshAllFavButtons() {
-  document.querySelectorAll('.fav-btn').forEach(btn => {
-    const cn = btn.getAttribute('data-cn');
-    const favs = loadFavorites();
-    const faved = favs.some(f => f.cn === cn);
+  document.querySelectorAll('.fav-btn').forEach(function(btn) {
+    var cn = btn.getAttribute('data-cn');
+    var favs = loadFavorites();
+    var faved = favs.some(function(f) { return f.cn === cn; });
     btn.className = 'fav-btn' + (faved ? ' faved' : '');
     btn.textContent = faved ? '❤️' : '♡';
   });
@@ -695,231 +534,241 @@ function refreshAllFavButtons() {
 
 // ======== 核心 ========
 function seededRand(seed) {
-  let s = seed;
-  return function() {
-    s = (s * 1664525 + 1013904223) & 0xFFFFFFFF;
-    return (s >>> 0) / 0xFFFFFFFF;
-  };
+  var s = seed;
+  return function() { s = (s * 1664525 + 1013904223) & 0xFFFFFFFF; return (s >>> 0) / 0xFFFFFFFF; };
 }
 
-function getDailyQuote() {
-  const today = new Date();
-  const dateStr = today.toISOString().split('T')[0];
-  const seed = dateStr.replace(/-/g, '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  const rand = seededRand(seed);
-  const paletteIdx = Math.floor(rand() * 7);
-  const quoteIdx = Math.floor(rand() * quotes.length);
-  return { quote: quotes[quoteIdx], paletteIdx };
+function getDailyItem() {
+  var today = new Date();
+  var dateStr = today.toISOString().split('T')[0];
+  var seed = dateStr.replace(/-/g, '').split('').reduce(function(a,c) { return a + c.charCodeAt(0); }, 0);
+  var rand = seededRand(seed);
+  var data = getData();
+  return data[Math.floor(rand() * data.length)];
 }
 
-const STORAGE_KEY = 'daily_quotes_history';
 function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(getStorageKeys().history)) || {}; } catch(e) { return {}; }
 }
-function saveHistory(history) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch {}
-}
-
-const { quote: dailyQuote } = getDailyQuote();
-
-function buildCardHTML(quote, badge) {
-  return `
-    ${badge ? `<div class="badge">${badge}</div>` : ''}
-    <div class="quote-cn">${quote.cn}</div>
-    <div class="divider"></div>
-    <div class="quote-en">${quote.en}</div>
-    <div class="author">— ${quote.author}</div>
-    ${quote.authorInfo ? `<div class="author-info">${quote.authorInfo}</div>` : ''}
-  `;
+function saveHistory(h) {
+  try { localStorage.setItem(getStorageKeys().history, JSON.stringify(h)); } catch(e) {}
 }
 
-// 渲染每日卡片
-const dailyCard = document.getElementById('dailyCard');
-dailyCard.innerHTML = buildCardHTML(dailyQuote, '今日名言');
-const dailyFavBtn = makeFavBtn(dailyQuote);
-dailyFavBtn.setAttribute('data-cn', dailyQuote.cn);
-dailyCard.appendChild(dailyFavBtn);
+function loadSeen() {
+  try { return new Set(JSON.parse(localStorage.getItem(getStorageKeys().seen)) || []); } catch(e) { return new Set(); }
+}
+function saveSeen(s) {
+  try { localStorage.setItem(getStorageKeys().seen, JSON.stringify(Array.from(s))); } catch(e) {}
+}
 
-document.getElementById('dateDisplay').textContent =
-  new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+function buildCardHTML(q, badge) {
+  return [
+    badge ? '<div class="badge">' + badge + '</div>' : '',
+    '<div class="quote-cn">' + q.cn + '</div>',
+    '<div class="divider"></div>',
+    '<div class="quote-en">' + q.en + '</div>',
+    '<div class="author">— ' + q.author + '</div>',
+    q.authorInfo ? '<div class="author-info">' + q.authorInfo + '</div>' : ''
+  ].join('');
+}
 
-// 保存今日到历史
-(function saveToday() {
-  const history = loadHistory();
-  const todayStr = new Date().toISOString().split('T')[0];
+function buildApiCardHTML(q, badgeText) {
+  return [
+    '<div class="badge">' + badgeText + '</div>',
+    '<div class="quote-cn">' + q.cn + '</div>',
+    '<div class="divider"></div>',
+    '<div class="quote-en">' + q.en + '</div>',
+    '<div class="author">— ' + q.author + '</div>',
+    q.authorInfo ? '<div class="author-info">' + q.authorInfo + '</div>' : ''
+  ].join('');
+}
+
+var dailyItem;
+var seen;
+var extraCount = 0;
+var historyOpen = false;
+var favPanelOpen = false;
+var searchedCount = 0;
+
+function initDaily() {
+  dailyItem = getDailyItem();
+  seen = loadSeen();
+  seen.add(dailyItem.cn);
+  saveSeen(seen);
+  extraCount = 0;
+  searchedCount = 0;
+}
+
+function renderAll() {
+  var container = document.getElementById('container');
+  container.innerHTML = '';
+
+  // 每日卡片
+  var card = document.createElement('div');
+  card.className = 'card daily';
+  if (currentMode === 'economics') card.classList.add('eco-card');
+  card.innerHTML = buildCardHTML(dailyItem, getBadgeLabel());
+  var favBtn = makeFavBtn(dailyItem);
+  favBtn.setAttribute('data-cn', dailyItem.cn);
+  card.appendChild(favBtn);
+  container.appendChild(card);
+
+  updateStats();
+  updateBtnMore();
+
+  // 保存今日到历史
+  var history = loadHistory();
+  var todayStr = new Date().toISOString().split('T')[0];
   if (!history[todayStr]) {
-    history[todayStr] = { cn: dailyQuote.cn, en: dailyQuote.en, author: dailyQuote.author, authorInfo: dailyQuote.authorInfo || '' };
+    history[todayStr] = { cn:dailyItem.cn, en:dailyItem.en, author:dailyItem.author, authorInfo:dailyItem.authorInfo||'' };
     saveHistory(history);
   }
-})();
 
-let seen = new Set([dailyQuote.cn]);
-let extraCount = 0;
-
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function addMoreQuotes(count = 1) {
-  const available = quotes.filter(q => !seen.has(q.cn));
-  if (!available.length) {
-    document.getElementById('btnMore').textContent = '已无更多名言';
-    document.getElementById('btnMore').disabled = true;
-    return;
-  }
-
-  const toAdd = Math.min(count, available.length);
-  const picked = shuffle(available).slice(0, toAdd);
-  const container = document.getElementById('container');
-  const fragment = document.createDocumentFragment();
-
-  picked.forEach(q => {
-    seen.add(q.cn);
-    extraCount++;
-    const card = document.createElement('div');
-    card.className = 'card extra';
-    card.innerHTML = buildCardHTML(q, `#${extraCount + 1}`);
-    const favBtn = makeFavBtn(q);
-    favBtn.setAttribute('data-cn', q.cn);
-    card.appendChild(favBtn);
-    fragment.appendChild(card);
-  });
-
-  container.appendChild(fragment);
-  updateStats();
-
-  if (seen.size >= quotes.length) {
-    document.getElementById('btnMore').textContent = '已展示全部';
-    document.getElementById('btnMore').disabled = true;
-  }
+  // 刷新面板
+  if (historyOpen) renderHistory();
+  if (favPanelOpen) renderFavPanel();
+  refreshAllFavButtons();
 }
 
 function updateStats() {
-  document.getElementById('stats').textContent = `共 ${seen.size} / ${quotes.length} 条`;
+  var total = getData().length + searchedCount;
+  document.getElementById('stats').textContent = '共 ' + seen.size + ' / ' + total + ' 条';
 }
 
-// ======== 历史记录 ========
-let historyOpen = false;
+function updateBtnMore() {
+  var btn = document.getElementById('btnMore');
+  var available = getData().filter(function(q) { return !seen.has(q.cn); });
+  if (!available.length) {
+    btn.textContent = '已无更多条目'; btn.disabled = true;
+  } else {
+    btn.textContent = '+ 再来一条'; btn.disabled = false;
+  }
+}
+
+function addMoreQuotes() {
+  var data = getData();
+  var available = data.filter(function(q) { return !seen.has(q.cn); });
+  if (!available.length) { updateBtnMore(); return; }
+
+  var picked = available[Math.floor(Math.random() * available.length)];
+  seen.add(picked.cn);
+  saveSeen(seen);
+  extraCount++;
+
+  var container = document.getElementById('container');
+  var card = document.createElement('div');
+  card.className = 'card extra';
+  if (currentMode === 'economics') card.classList.add('eco-card');
+  card.innerHTML = buildCardHTML(picked, '#' + (extraCount + searchedCount + 1));
+  var favBtn = makeFavBtn(picked);
+  favBtn.setAttribute('data-cn', picked.cn);
+  card.appendChild(favBtn);
+  container.appendChild(card);
+
+  updateStats(); updateBtnMore();
+}
+
+// ======== 历史 ========
 function toggleHistory() {
   historyOpen = !historyOpen;
-  const panel = document.getElementById('historyPanel');
-  if (historyOpen) {
-    renderHistory();
-    panel.classList.add('open');
-    document.querySelector('.btn-history').textContent = '收起历史';
-  } else {
-    panel.classList.remove('open');
-    document.querySelector('.btn-history').textContent = '📅 历史记录';
-  }
+  var panel = document.getElementById('historyPanel');
+  var btn = document.querySelector('.btn-history');
+  if (historyOpen) { renderHistory(); panel.classList.add('open'); btn.textContent = '收起历史'; }
+  else { panel.classList.remove('open'); btn.textContent = getHistoryLabel(); }
 }
 
 function renderHistory() {
-  const history = loadHistory();
-  const dates = Object.keys(history).sort().reverse();
-  const panel = document.getElementById('historyPanel');
+  var history = loadHistory();
+  var dates = Object.keys(history).sort().reverse();
+  var panel = document.getElementById('historyPanel');
+  if (!dates.length) { panel.innerHTML = '<div class="panel-empty">' + getEmptyHistoryMsg() + '</div>'; return; }
 
-  if (!dates.length) {
-    panel.innerHTML = '<div class="panel-empty">暂无历史记录，明天再来吧</div>';
-    return;
-  }
-
-  panel.innerHTML = dates.map(dateStr => {
-    const q = history[dateStr];
-    const displayDate = new Date(dateStr.replace(/_.*$/,'') + 'T00:00:00').toLocaleDateString('zh-CN', {
-      year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
-    });
-    const customTag = q.custom ? '<span class="tag-custom">自定义</span>' : '';
-    const infoHtml = q.authorInfo ? `<div class="author-info">${q.authorInfo}</div>` : '';
-    const cnEnc = q.cn.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    return `
-      <div class="history-card" data-cn="${cnEnc}">
-        <div class="history-date">${displayDate}${customTag}</div>
-        <div class="quote-cn">${q.cn}</div>
-        <div class="divider"></div>
-        <div class="quote-en">${q.en}</div>
-        <div class="author">— ${q.author}</div>
-        ${infoHtml}
-      </div>
-    `;
+  panel.innerHTML = dates.map(function(dateStr) {
+    var q = history[dateStr];
+    var displayDate = new Date(dateStr.replace(/_.*$/,'') + 'T00:00:00').toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+    var customTag = q.custom ? '<span class="tag-custom">自定义</span>' : '';
+    var infoHtml = q.authorInfo ? '<div class="author-info">' + q.authorInfo + '</div>' : '';
+    return [
+      '<div class="history-card">',
+      '<div class="history-date">' + displayDate + customTag + '</div>',
+      '<div class="quote-cn">' + q.cn + '</div>',
+      '<div class="divider"></div>',
+      '<div class="quote-en">' + q.en + '</div>',
+      '<div class="author">— ' + q.author + '</div>',
+      infoHtml,
+      '</div>'
+    ].join('');
   }).join('');
 
-  // 给历史卡片加收藏按钮
-  const cards = panel.querySelectorAll('.history-card');
-  cards.forEach(card => {
-    const cn = card.getAttribute('data-cn');
-    const q = history[Object.keys(history).find(k => history[k].cn === cn) || ''];
-    if (q) {
-      const favBtn = makeFavBtn(q);
-      favBtn.setAttribute('data-cn', cn);
-      card.appendChild(favBtn);
+  var cards = panel.querySelectorAll('.history-card');
+  cards.forEach(function(card) {
+    var cnEl = card.querySelector('.quote-cn');
+    if (!cnEl) return;
+    var cn = cnEl.textContent;
+    var hist = loadHistory();
+    var keys = Object.keys(hist);
+    for (var i = 0; i < keys.length; i++) {
+      if (hist[keys[i]].cn === cn) {
+        var favBtn = makeFavBtn(hist[keys[i]]);
+        favBtn.setAttribute('data-cn', cn);
+        card.appendChild(favBtn);
+        break;
+      }
     }
   });
 }
 
 // ======== 收藏面板 ========
-let favPanelOpen = false;
 function toggleFavorites() {
   favPanelOpen = !favPanelOpen;
-  const panel = document.getElementById('favPanel');
-  const btn = document.getElementById('btnFavToggle');
-  const btnPanel = document.querySelector('.btn-fav-panel');
+  var panel = document.getElementById('favPanel');
+  var btn = document.getElementById('btnFavToggle');
+  var btnPanel = document.querySelector('.btn-fav-panel');
   if (favPanelOpen) {
-    renderFavPanel();
-    panel.classList.add('open');
-    btn.textContent = '❤️';
-    btn.style.background = 'rgba(255,107,138,0.15)';
+    renderFavPanel(); panel.classList.add('open');
+    btn.textContent = '❤️'; btn.style.background = 'rgba(255,107,138,0.15)';
     btnPanel.textContent = '收起收藏';
   } else {
     panel.classList.remove('open');
-    btn.textContent = '❤️';
-    btn.style.background = '';
-    btnPanel.textContent = '❤️ 我的收藏';
+    btn.textContent = '❤️'; btn.style.background = '';
+    btnPanel.textContent = getFavLabel();
   }
 }
 
 function renderFavPanel() {
-  const favs = loadFavorites();
-  const panel = document.getElementById('favPanel');
+  var favs = loadFavorites();
+  var panel = document.getElementById('favPanel');
+  if (!favs.length) { panel.innerHTML = '<div class="panel-empty">' + getEmptyFavMsg() + '</div>'; return; }
 
-  if (!favs.length) {
-    panel.innerHTML = '<div class="panel-empty">还没有收藏的名言，点击卡片上的 ♡ 来收藏吧</div>';
-    return;
-  }
-
-  panel.innerHTML = favs.map((q, i) => {
-    const infoHtml = q.authorInfo ? `<div class="author-info">${q.authorInfo}</div>` : '';
-    return `
-      <div class="history-card">
-        <div class="history-date">收藏 #${i + 1}</div>
-        <div class="quote-cn">${q.cn}</div>
-        <div class="divider"></div>
-        <div class="quote-en">${q.en}</div>
-        <div class="author">— ${q.author}</div>
-        ${infoHtml}
-      </div>
-    `;
+  panel.innerHTML = favs.map(function(q, i) {
+    var infoHtml = q.authorInfo ? '<div class="author-info">' + q.authorInfo + '</div>' : '';
+    return [
+      '<div class="history-card">',
+      '<div class="history-date">收藏 #' + (i+1) + '</div>',
+      '<div class="quote-cn">' + q.cn + '</div>',
+      '<div class="divider"></div>',
+      '<div class="quote-en">' + q.en + '</div>',
+      '<div class="author">— ' + q.author + '</div>',
+      infoHtml,
+      '</div>'
+    ].join('');
   }).join('');
 
-  // 给收藏面板卡片也加按钮
-  const cards = panel.querySelectorAll('.history-card');
-  cards.forEach((card, i) => {
-    const favBtn = makeFavBtn(favs[i]);
+  var cards = panel.querySelectorAll('.history-card');
+  cards.forEach(function(card, i) {
+    var favBtn = makeFavBtn(favs[i]);
     favBtn.setAttribute('data-cn', favs[i].cn);
     card.appendChild(favBtn);
   });
 }
 
-// ======== 添加名言表单 ========
+// ======== 添加表单 ========
 function openAddForm() {
   document.getElementById('overlay').classList.add('open');
+  document.getElementById('formTitle').textContent = getFormTitle();
+  document.getElementById('labelAuthor').textContent = getFormLabel();
   document.getElementById('inputCn').focus();
 }
-
 function closeAddForm() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('inputCn').value = '';
@@ -927,121 +776,128 @@ function closeAddForm() {
   document.getElementById('inputAuthor').value = '';
   document.getElementById('inputAuthorInfo').value = '';
 }
-
 function saveCustomQuote() {
-  const cn = document.getElementById('inputCn').value.trim();
-  const en = document.getElementById('inputEn').value.trim();
-  const author = document.getElementById('inputAuthor').value.trim() || '佚名';
-  const authorInfo = document.getElementById('inputAuthorInfo').value.trim();
-
+  var cn = document.getElementById('inputCn').value.trim();
+  var en = document.getElementById('inputEn').value.trim();
+  var author = document.getElementById('inputAuthor').value.trim() || '佚名';
+  var authorInfo = document.getElementById('inputAuthorInfo').value.trim();
   if (!cn) { document.getElementById('inputCn').focus(); return; }
 
-  const history = loadHistory();
-  const todayStr = new Date().toISOString().split('T')[0];
-
-  let key = todayStr;
-  let suffix = 1;
-  while (history[key]) { suffix++; key = `${todayStr}_${suffix}`; }
-
-  history[key] = { cn, en: en || '', author, authorInfo, custom: true };
+  var history = loadHistory();
+  var todayStr = new Date().toISOString().split('T')[0];
+  var key = todayStr, suffix = 1;
+  while (history[key]) { suffix++; key = todayStr + '_' + suffix; }
+  history[key] = { cn:cn, en:en||'', author:author, authorInfo:authorInfo, custom:true };
   saveHistory(history);
   closeAddForm();
   if (historyOpen) renderHistory();
 }
 
 // ======== 在线获取 + 搜索 ========
-var QUOTABLE_API = "https://api.quotable.io";
-var TRANSLATE_API = "https://api.mymemory.translated.net/get";
+var QUOTABLE_API = 'https://api.quotable.io';
+var TRANSLATE_API = 'https://api.mymemory.translated.net/get';
 
-function showSpinner(show) {
-  document.getElementById("spinner").style.display = show ? "block" : "none";
-}
-
-function setSearchHint(msg) {
-  document.getElementById("searchHint").textContent = msg;
-}
+function showSpinner(s) { document.getElementById('spinner').style.display = s ? 'block' : 'none'; }
+function setSearchHint(msg) { document.getElementById('searchHint').textContent = msg; }
 
 async function translateToChinese(text) {
   try {
-    var resp = await fetch(TRANSLATE_API + "?q=" + encodeURIComponent(text) + "&langpair=en|zh");
+    var resp = await fetch(TRANSLATE_API + '?q=' + encodeURIComponent(text) + '&langpair=en|zh');
     var data = await resp.json();
-    if (data.responseStatus === 200 && data.responseData.translatedText) {
-      return data.responseData.translatedText;
-    }
+    if (data.responseStatus === 200 && data.responseData.translatedText) return data.responseData.translatedText;
   } catch(e) {}
   return null;
 }
 
-function addApiCard(quote) {
-  var container = document.getElementById("container");
-  var card = document.createElement("div");
-  card.className = "api-card";
-  card.innerHTML = [
-    "<div class=\"badge\">🌐 在线获取</div>",
-    "<div class=\"quote-cn\">" + quote.cn + "</div>",
-    "<div class=\"divider\"></div>",
-    "<div class=\"quote-en\">" + quote.en + "</div>",
-    "<div class=\"author\">— " + quote.author + "</div>",
-    quote.authorInfo ? "<div class=\"author-info\">" + quote.authorInfo + "</div>" : ""
-  ].join("");
-  var favBtn = makeFavBtn(quote);
-  favBtn.setAttribute("data-cn", quote.cn);
+function addApiCard(q) {
+  var container = document.getElementById('container');
+  var card = document.createElement('div');
+  card.className = 'api-card';
+  if (currentMode === 'economics') card.classList.add('eco-card');
+  card.innerHTML = buildApiCardHTML(q, '🌐 在线获取');
+  var favBtn = makeFavBtn(q);
+  favBtn.setAttribute('data-cn', q.cn);
   card.appendChild(favBtn);
   container.appendChild(card);
+  searchedCount++;
+  seen.add(q.cn);
+  saveSeen(seen);
+  updateStats(); updateBtnMore();
 }
 
 async function fetchRandomOnline() {
   showSpinner(true);
-  setSearchHint("正在从网络获取随机名言...");
+  setSearchHint('正在从网络获取...');
   try {
-    var resp = await fetch(QUOTABLE_API + "/random");
+    var query = currentMode === 'economics' ? 'economics' : 'wisdom';
+    var resp = await fetch(QUOTABLE_API + '/random?tags=' + query);
+    if (!resp.ok) resp = await fetch(QUOTABLE_API + '/random');
     var data = await resp.json();
-    var en = data.content;
-    var author = data.author || "佚名";
+    var en = data.content, author = data.author || '佚名';
     var cn = await translateToChinese(en);
-    addApiCard({
-      cn: cn || en,
-      en: en,
-      author: author,
-      authorInfo: cn ? "" : "翻译服务暂时不可用，仅显示英文原文"
-    });
-    setSearchHint(cn ? "已随机获取并翻译" : "已获取（翻译暂不可用）");
-  } catch(e) {
-    setSearchHint("网络请求失败，请检查网络后重试");
-  }
+    addApiCard({ cn:cn||en, en:en, author:author, authorInfo:cn?'':'翻译暂不可用，仅显示原文' });
+    setSearchHint(cn ? '已随机获取并翻译' : '已获取（翻译暂不可用）');
+  } catch(e) { setSearchHint('网络请求失败，请检查网络后重试'); }
   showSpinner(false);
 }
 
 async function searchQuotes() {
-  var query = document.getElementById("searchInput").value.trim();
+  var query = document.getElementById('searchInput').value.trim();
   if (!query) return;
   showSpinner(true);
-  setSearchHint("正在搜索「" + query + "」...");
+  setSearchHint('正在搜索「' + query + '」...');
   try {
-    var resp = await fetch(QUOTABLE_API + "/search/quotes?query=" + encodeURIComponent(query) + "&limit=5");
+    var resp = await fetch(QUOTABLE_API + '/search/quotes?query=' + encodeURIComponent(query) + '&limit=5');
     var data = await resp.json();
     if (!data.results || !data.results.length) {
-      setSearchHint("没有找到与「" + query + "」相关的名言");
-      showSpinner(false);
-      return;
+      setSearchHint('没有找到与「' + query + '」相关的结果');
+      showSpinner(false); return;
     }
     for (var i = 0; i < data.results.length; i++) {
       var item = data.results[i];
       var cnResult = await translateToChinese(item.content);
-      addApiCard({
-        cn: cnResult || item.content,
-        en: item.content,
-        author: item.author || "佚名",
-        authorInfo: cnResult ? "" : "翻译服务暂时不可用"
-      });
+      addApiCard({ cn:cnResult||item.content, en:item.content, author:item.author||'佚名', authorInfo:cnResult?'':'翻译暂不可用' });
     }
-    setSearchHint("已找到 " + data.results.length + " 条与「" + query + "」相关的名言");
-  } catch(e) {
-    setSearchHint("搜索请求失败，请检查网络后重试");
-  }
+    setSearchHint('已找到 ' + data.results.length + ' 条与「' + query + '」相关的结果');
+  } catch(e) { setSearchHint('搜索请求失败，请检查网络后重试'); }
   showSpinner(false);
 }
 
+// ======== 模式切换 ========
+function switchMode(mode) {
+  if (currentMode === mode) return;
+  // 保存当前 seen
+  saveSeen(seen);
+  // 关闭面板
+  if (historyOpen) { historyOpen = false; document.getElementById('historyPanel').classList.remove('open'); document.querySelector('.btn-history').textContent = getHistoryLabel(); }
+  if (favPanelOpen) { favPanelOpen = false; document.getElementById('favPanel').classList.remove('open'); document.getElementById('btnFavToggle').style.background = ''; document.querySelector('.btn-fav-panel').textContent = getFavLabel(); }
+  // 切换
+  currentMode = mode;
+  initDaily();
+  // 更新UI文字
+  document.getElementById('tabQuotes').classList.toggle('active', mode === 'quotes');
+  document.getElementById('tabEco').classList.toggle('active', mode === 'economics');
+  document.getElementById('searchInput').placeholder = getSearchPlaceholder();
+  document.getElementById('formTitle').textContent = getFormTitle();
+  document.getElementById('labelAuthor').textContent = getFormLabel();
+  document.querySelector('.btn-add').textContent = getAddLabel();
+  document.querySelector('.btn-history').textContent = getHistoryLabel();
+  document.querySelector('.btn-fav-panel').textContent = getFavLabel();
+  document.getElementById('btnFavToggle').textContent = '❤️';
+  document.getElementById('btnFavToggle').style.background = '';
+  document.getElementById('historyPanel').innerHTML = '';
+  document.getElementById('favPanel').innerHTML = '';
+  setSearchHint('');
+  // 重渲染
+  document.getElementById('container').innerHTML = '';
+  renderAll();
+}
+
+// ======== 初始化 ========
+initDaily();
+document.getElementById('tabQuotes').classList.add('active');
+document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+renderAll();
 </script>
 
 </body>
