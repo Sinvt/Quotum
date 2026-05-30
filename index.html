@@ -336,6 +336,19 @@
 
   .eco-card { border-left: 3px solid var(--eco-border); }
   .eco-card .badge { color: var(--eco-accent); }
+
+  .watermark {
+    position: fixed;
+    bottom: 18px;
+    left: 24px;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-style: italic;
+    z-index: 10;
+    pointer-events: none;
+    transition: color 0.5s;
+  }
 </style>
 </head>
 <body>
@@ -991,6 +1004,23 @@ document.getElementById('tabQuotes').classList.add('active');
 document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
 renderAll();
 </script>
+
+<!-- ====== 左下角标识 | 任选一种，其他两行删掉即可 ====== -->
+
+<!-- 风格A：简洁斜体 · 优选 -->
+<div class="watermark">Qy & Gxz</div>
+
+<!-- 风格B：装饰线 · 优雅 -->
+<!-- <div class="watermark">— Qy & Gxz —</div> -->
+
+<!-- 风格C：点状 · 含蓄 -->
+<!-- <div class="watermark">· Qy & Gxz ·</div> -->
+
+<!-- 风格D：永恒符号 -->
+<!-- <div class="watermark">Qy ∞ Gxz</div> -->
+
+<!-- 风格E：星辰 · 梦幻 -->
+<!-- <div class="watermark">✦ Qy & Gxz ✦</div> -->
 
 </body>
 </html>
