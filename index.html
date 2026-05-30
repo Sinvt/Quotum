@@ -156,25 +156,23 @@
 
   .card .del-btn {
     position: absolute; top: 16px; left: 20px;
-    background: none; border: none; font-size: 0.85rem;
-    cursor: pointer; opacity: 0; transition: all 0.25s;
+    background: none; border: none; font-size: 1rem;
+    cursor: pointer; opacity: 0.25; transition: all 0.25s;
     color: var(--text-muted); font-family: inherit;
-    padding: 2px 6px; border-radius: 12px;
+    padding: 4px 8px; border-radius: 14px;
   }
 
-  .card:hover .del-btn,
-  .history-card:hover .del-btn { opacity: 0.35; }
-
-  .card .del-btn:hover,
-  .history-card .del-btn:hover { opacity: 1; color: #e05555; background: rgba(224,85,85,0.12); }
+  .card .del-btn:hover { opacity: 1; color: #fff; background: rgba(224,85,85,0.35); }
 
   .history-card .del-btn {
     position: absolute; top: 10px; left: 16px;
-    background: none; border: none; font-size: 0.8rem;
-    cursor: pointer; opacity: 0; transition: all 0.25s;
+    background: none; border: none; font-size: 0.92rem;
+    cursor: pointer; opacity: 0.22; transition: all 0.25s;
     color: var(--text-muted); font-family: inherit;
-    padding: 2px 6px; border-radius: 12px;
+    padding: 3px 7px; border-radius: 12px;
   }
+
+  .history-card .del-btn:hover { opacity: 1; color: #fff; background: rgba(224,85,85,0.35); }
 
   .card.daily {
     border: 1px solid var(--daily-border);
@@ -390,11 +388,11 @@
   @media (hover: none) and (pointer: coarse) {
     .watermark { opacity: 0.35; font-size: 0.68rem; }
     .watermark:active {
-      opacity: 1;
-      font-size: 1.05rem;
-      color: var(--fav-active);
-      text-shadow: 0 0 14px rgba(255,107,138,0.6);
+      opacity: 1; font-size: 1.05rem;
+      color: var(--fav-active); text-shadow: 0 0 14px rgba(255,107,138,0.6);
     }
+    .card .del-btn { opacity: 0.35; font-size: 1.05rem; }
+    .history-card .del-btn { opacity: 0.3; font-size: 0.95rem; }
   }
 
 </style>
