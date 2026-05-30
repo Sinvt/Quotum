@@ -1062,6 +1062,23 @@ function addApiCard(q, badgeText) {
 
 async function fetchRandomOnline() {
   showSpinner(true);
+
+  // 古诗模式永远走本地——在线 API 没有中国古典诗词
+  if (currentMode === 'poetry') {
+    setSearchHint('古诗模式下随机取自本地精选库');
+    var data = poetryData;
+    var unseen = data.filter(function(q) { return !seen.has(q.cn); });
+    if (unseen.length) {
+      var pick = unseen[Math.floor(Math.random() * unseen.length)];
+      addApiCard(pick, '📚 ' + getBadgeLabel());
+      setSearchHint('✅ 从古诗库随机选取（共 ' + data.length + ' 首）');
+    } else {
+      setSearchHint('所有古诗均已浏览');
+    }
+    showSpinner(false);
+    return;
+  }
+
   setSearchHint('正在联网搜索...');
 
   // 并发请求多个源，取第一个成功的
@@ -1088,12 +1105,12 @@ async function fetchRandomOnline() {
     setSearchHint(cn ? '✅ 已从 ' + srcName + ' 获取并翻译' : '已从 ' + srcName + ' 获取（翻译暂不可用）');
   } else {
     // 所有在线源失败，走本地
-    var data = getData();
-    var unseen = data.filter(function(q) { return !seen.has(q.cn); });
-    if (unseen.length) {
-      var pick = unseen[Math.floor(Math.random() * unseen.length)];
-      addApiCard(pick, '📚 本地精选');
-      setSearchHint('⚠️ 网络暂不可用，已从本地库选取（共 ' + data.length + ' 条）');
+    var d = getData();
+    var u = d.filter(function(q) { return !seen.has(q.cn); });
+    if (u.length) {
+      var p = u[Math.floor(Math.random() * u.length)];
+      addApiCard(p, '📚 本地精选');
+      setSearchHint('⚠️ 网络暂不可用，已从本地库选取（共 ' + d.length + ' 条）');
     } else {
       setSearchHint('⚠️ 网络暂不可用，且所有本地条目均已浏览');
     }
@@ -1104,7 +1121,7 @@ async function fetchRandomOnline() {
 function searchQuotes() {
   var query = document.getElementById('searchInput').value.trim().toLowerCase();
   if (!query) return;
-  var allData = quotesData.concat(economicsData);
+  var allData = quotesData.concat(economicsData).concat(poetryData);
   var results = allData.filter(function(q) {
     return q.cn.toLowerCase().indexOf(query) !== -1 ||
            q.en.toLowerCase().indexOf(query) !== -1 ||
