@@ -95,3 +95,7 @@ Quotum/
 ## 📄 License
 
 MIT
+
+---
+
+*Made with ❤️ by Sinvt · Powered by vanilla HTML/CSS/JS*
