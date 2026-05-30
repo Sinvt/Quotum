@@ -342,12 +342,17 @@
     bottom: 18px;
     left: 24px;
     color: var(--text-muted);
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
     font-style: italic;
     z-index: 10;
     pointer-events: none;
-    transition: color 0.5s;
+    opacity: 0.35;
+    transition: opacity 1.5s ease, color 0.5s;
+  }
+
+  .watermark:hover {
+    opacity: 0.7;
   }
 </style>
 </head>
@@ -1005,22 +1010,34 @@ document.getElementById('dateDisplay').textContent = new Date().toLocaleDateStri
 renderAll();
 </script>
 
-<!-- ====== 左下角标识 | 任选一种，其他两行删掉即可 ====== -->
+<!-- ====== 左下角标识 | 每行一种隐喻风格，保留一行即可 ====== -->
 
-<!-- 风格A：简洁斜体 · 优选 -->
-<div class="watermark">Qy & Gxz</div>
+<!-- 风格1：合写之名 · 两个字母合为一个词 -->
+<!-- <div class="watermark">QyGxz</div> -->
 
-<!-- 风格B：装饰线 · 优雅 -->
-<!-- <div class="watermark">— Qy & Gxz —</div> -->
+<!-- 风格2：双星 · 猎户座的两颗星 -->
+<!-- <div class="watermark">Qy  ·  Gxz</div> -->
 
-<!-- 风格C：点状 · 含蓄 -->
-<!-- <div class="watermark">· Qy & Gxz ·</div> -->
+<!-- 风格3：对白 · 两个名字之间的一切 -->
+<div class="watermark">Qy x Gxz</div>
 
-<!-- 风格D：永恒符号 -->
-<!-- <div class="watermark">Qy ∞ Gxz</div> -->
+<!-- 风格4：藏书印 · 两个读者的私人图书馆 -->
+<!-- <div class="watermark">Q & G 藏书</div> -->
 
-<!-- 风格E：星辰 · 梦幻 -->
-<!-- <div class="watermark">✦ Qy & Gxz ✦</div> -->
+<!-- 风格5：只有首字母 · 最隐秘 -->
+<!-- <div class="watermark">Q G</div> -->
+
+<!-- 风格6：一行诗的署名 · 像一首未完的诗 -->
+<!-- <div class="watermark">—— Qy 与 Gxz</div> -->
+
+<!-- 风格7：两个原点 · 彼此环绕 -->
+<!-- <div class="watermark">Qy  ◦  Gxz</div> -->
+
+<!-- 风格8：抄送栏 · 像一封秘密邮件 -->
+<!-- <div class="watermark">cc: Qy & Gxz</div> -->
+
+<!-- 风格9：月与潮 · 一只影响另一只 -->
+<!-- <div class="watermark">Qy ⇌ Gxz</div> -->
 
 </body>
 </html>
