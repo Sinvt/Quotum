@@ -446,6 +446,100 @@
     margin-left: 4px;
     vertical-align: middle;
   }
+
+  .search-bar {
+    max-width: 620px;
+    width: 90%;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 30px;
+    padding: 10px 20px;
+    color: var(--input-color);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-bar input:focus { border-color: var(--btn-border); }
+
+  .btn-search, .btn-fetch {
+    white-space: nowrap;
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
+    color: var(--btn-color);
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    transition: all 0.3s ease;
+  }
+
+  .btn-search:hover, .btn-fetch:hover { background: var(--card-bg); }
+
+  .btn-fetch {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 28px;
+    font-size: 0.82rem;
+  }
+
+  .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--btn-ghost-border);
+    border-top-color: var(--btn-color);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .api-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(100,200,255,0.15);
+    border-radius: 24px;
+    padding: 50px 50px 20px;
+    max-width: 620px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    animation: fadeIn 0.5s ease;
+    position: relative;
+  }
+
+  .api-card .badge {
+    display: inline-block;
+    color: rgba(100,200,255,0.6);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .api-card .quote-cn { font-size: 1.2rem; line-height: 1.9; }
+  .api-card .quote-en { font-size: 0.95rem; }
+  .api-card .author { margin-top: 24px; }
+
+  .search-hint {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-align: center;
+    margin-top: 4px;
+  }
 </style>
 </head>
 <body>
@@ -454,6 +548,15 @@
   <button class="btn-icon" id="btnTheme" onclick="toggleTheme()" title="切换日间/夜间模式">🌙</button>
   <button class="btn-icon" id="btnFavToggle" onclick="toggleFavorites()" title="收藏夹">❤️</button>
 </div>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="搜索名言关键字，如 love、courage、wisdom..."
+         onkeydown="if(event.key==='Enter')searchQuotes()">
+  <button class="btn-search" onclick="searchQuotes()">🔍 搜索</button>
+  <button class="btn-fetch" onclick="fetchRandomOnline()" title="从网络随机获取">🎲 随机</button>
+</div>
+<div class="search-hint" id="searchHint"></div>
+<div class="spinner" id="spinner"></div>
 
 <div class="container" id="container">
   <div class="card daily" id="dailyCard"></div>
@@ -845,6 +948,100 @@ function saveCustomQuote() {
   closeAddForm();
   if (historyOpen) renderHistory();
 }
+
+// ======== 在线获取 + 搜索 ========
+var QUOTABLE_API = "https://api.quotable.io";
+var TRANSLATE_API = "https://api.mymemory.translated.net/get";
+
+function showSpinner(show) {
+  document.getElementById("spinner").style.display = show ? "block" : "none";
+}
+
+function setSearchHint(msg) {
+  document.getElementById("searchHint").textContent = msg;
+}
+
+async function translateToChinese(text) {
+  try {
+    var resp = await fetch(TRANSLATE_API + "?q=" + encodeURIComponent(text) + "&langpair=en|zh");
+    var data = await resp.json();
+    if (data.responseStatus === 200 && data.responseData.translatedText) {
+      return data.responseData.translatedText;
+    }
+  } catch(e) {}
+  return null;
+}
+
+function addApiCard(quote) {
+  var container = document.getElementById("container");
+  var card = document.createElement("div");
+  card.className = "api-card";
+  card.innerHTML = [
+    "<div class=\"badge\">🌐 在线获取</div>",
+    "<div class=\"quote-cn\">" + quote.cn + "</div>",
+    "<div class=\"divider\"></div>",
+    "<div class=\"quote-en\">" + quote.en + "</div>",
+    "<div class=\"author\">— " + quote.author + "</div>",
+    quote.authorInfo ? "<div class=\"author-info\">" + quote.authorInfo + "</div>" : ""
+  ].join("");
+  var favBtn = makeFavBtn(quote);
+  favBtn.setAttribute("data-cn", quote.cn);
+  card.appendChild(favBtn);
+  container.appendChild(card);
+}
+
+async function fetchRandomOnline() {
+  showSpinner(true);
+  setSearchHint("正在从网络获取随机名言...");
+  try {
+    var resp = await fetch(QUOTABLE_API + "/random");
+    var data = await resp.json();
+    var en = data.content;
+    var author = data.author || "佚名";
+    var cn = await translateToChinese(en);
+    addApiCard({
+      cn: cn || en,
+      en: en,
+      author: author,
+      authorInfo: cn ? "" : "翻译服务暂时不可用，仅显示英文原文"
+    });
+    setSearchHint(cn ? "已随机获取并翻译" : "已获取（翻译暂不可用）");
+  } catch(e) {
+    setSearchHint("网络请求失败，请检查网络后重试");
+  }
+  showSpinner(false);
+}
+
+async function searchQuotes() {
+  var query = document.getElementById("searchInput").value.trim();
+  if (!query) return;
+  showSpinner(true);
+  setSearchHint("正在搜索「" + query + "」...");
+  try {
+    var resp = await fetch(QUOTABLE_API + "/search/quotes?query=" + encodeURIComponent(query) + "&limit=5");
+    var data = await resp.json();
+    if (!data.results || !data.results.length) {
+      setSearchHint("没有找到与「" + query + "」相关的名言");
+      showSpinner(false);
+      return;
+    }
+    for (var i = 0; i < data.results.length; i++) {
+      var item = data.results[i];
+      var cnResult = await translateToChinese(item.content);
+      addApiCard({
+        cn: cnResult || item.content,
+        en: item.content,
+        author: item.author || "佚名",
+        authorInfo: cnResult ? "" : "翻译服务暂时不可用"
+      });
+    }
+    setSearchHint("已找到 " + data.results.length + " 条与「" + query + "」相关的名言");
+  } catch(e) {
+    setSearchHint("搜索请求失败，请检查网络后重试");
+  }
+  showSpinner(false);
+}
+
 </script>
 
 </body>
