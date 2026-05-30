@@ -994,43 +994,11 @@ function saveCustomQuote() {
 }
 
 // ======== 在线获取 + 搜索 ========
+// 互联网实时获取：古诗→jinrishici.com | 名言/经济学→ZenQuotes+PoetryDB | 翻译→MyMemory
 var TRANSLATE_API = 'https://api.mymemory.translated.net/get';
-
-var ONLINE_SOURCES = [
-  {
-    name: 'ZenQuotes',
-    fetch: function() {
-      return fetch('https://zenquotes.io/api/random', { signal: AbortSignal.timeout(6000) })
-        .then(function(r) { if (!r.ok) throw Error(); return r.json(); })
-        .then(function(d) { return { en: d[0].q, author: d[0].a }; });
-    }
-  },
-  {
-    name: 'PoetryDB',
-    fetch: function() {
-      return fetch('https://poetrydb.org/random/1', { signal: AbortSignal.timeout(6000) })
-        .then(function(r) { if (!r.ok) throw Error(); return r.json(); })
-        .then(function(d) {
-          var lines = d[0].lines.slice(0, 3).join(' / ');
-          return { en: lines, author: d[0].author, source: 'PoetryDB' };
-        });
-    }
-  },
-  {
-    name: 'Wikipedia',
-    fetch: function() {
-      return fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary', { signal: AbortSignal.timeout(8000) })
-        .then(function(r) { if (!r.ok) throw Error(); return r.json(); })
-        .then(function(d) {
-          var text = (d.extract || d.description || '').split('. ').slice(0, 2).join('. ');
-          return { en: text, author: d.title, source: 'Wikipedia' };
-        });
-    }
-  }
-];
-
-function showSpinner(s) { document.getElementById('spinner').style.display = s ? 'block' : 'none'; }
-function setSearchHint(msg) { document.getElementById('searchHint').textContent = msg; }
+var JINRISHICI_RANDOM = 'https://v2.jinrishici.com/one.json';
+var ZENQUOTES_RANDOM = 'https://zenquotes.io/api/random';
+var POETRYDB_RANDOM = 'https://poetrydb.org/random/1';
 
 async function translateToChinese(text) {
   try {
@@ -1042,8 +1010,10 @@ async function translateToChinese(text) {
   return null;
 }
 
-function addApiCard(q, badgeText) {
-  badgeText = badgeText || '🌐 在线获取';
+function showSpinner(s) { document.getElementById('spinner').style.display = s ? 'block' : 'none'; }
+function setSearchHint(msg) { document.getElementById('searchHint').textContent = msg; }
+
+function addOnlineCard(q, badgeText, sourceName) {
   var container = document.getElementById('container');
   var card = document.createElement('div');
   card.className = 'api-card';
@@ -1060,88 +1030,144 @@ function addApiCard(q, badgeText) {
   updateStats(); updateBtnMore();
 }
 
+// ---- 🎲 随机 | 全模式从互联网实时获取 ----
 async function fetchRandomOnline() {
   showSpinner(true);
+  var gotFromWeb = false;
 
-  // 古诗模式永远走本地——在线 API 没有中国古典诗词
   if (currentMode === 'poetry') {
-    setSearchHint('古诗模式下随机取自本地精选库');
-    var data = poetryData;
-    var unseen = data.filter(function(q) { return !seen.has(q.cn); });
-    if (unseen.length) {
-      var pick = unseen[Math.floor(Math.random() * unseen.length)];
-      addApiCard(pick, '📚 ' + getBadgeLabel());
-      setSearchHint('✅ 从古诗库随机选取（共 ' + data.length + ' 首）');
-    } else {
-      setSearchHint('所有古诗均已浏览');
+    // 古诗：jinrishici.com 实时获取中国古诗词
+    setSearchHint('🌐 从互联网实时获取古诗...');
+    try {
+      var resp = await fetch(JINRISHICI_RANDOM, { signal: AbortSignal.timeout(8000) });
+      var data = await resp.json();
+      if (data.status === 'success' && data.data) {
+        var d = data.data;
+        var content = d.content;
+        var author = (d.origin.dynasty || '') + ' · ' + (d.origin.author || '佚名');
+        var authorInfo = '出自《' + (d.origin.title || '') + '》 | 实时获取自 jinrishici.com';
+        addOnlineCard({ cn: content, en: '', author: author, authorInfo: authorInfo }, '🌐 今日诗词', 'jinrishici.com');
+        setSearchHint('✅ 已从今日诗词网实时获取');
+        gotFromWeb = true;
+      }
+    } catch(e) {}
+
+    if (!gotFromWeb) {
+      setSearchHint('⚠️ 今日诗词网暂不可用，回退本地古诗库');
+      var unseen = poetryData.filter(function(q) { return !seen.has(q.cn); });
+      if (unseen.length) {
+        addOnlineCard(unseen[Math.floor(Math.random() * unseen.length)], '📚 本地古诗', '本地库');
+        setSearchHint('⚠️ 互联网暂不可用，已从本地古诗库选取');
+      } else { setSearchHint('本地古诗均已浏览'); }
     }
-    showSpinner(false);
-    return;
-  }
 
-  setSearchHint('正在联网搜索...');
+  } else if (currentMode === 'economics') {
+    // 经济学/名言：ZenQuotes 实时获取 + 翻译
+    setSearchHint('🌐 从互联网实时获取...');
+    try {
+      var resp = await fetch(ZENQUOTES_RANDOM, { signal: AbortSignal.timeout(8000) });
+      var j = await resp.json();
+      if (j && j.length) {
+        var en = j[0].q, author = j[0].a || '佚名';
+        var cn = await translateToChinese(en);
+        addOnlineCard({
+          cn: cn || en, en: en, author: author,
+          authorInfo: cn ? '来源: ZenQuotes · 实时翻译' : '来源: ZenQuotes（翻译暂不可用）'
+        }, '🌐 ZenQuotes', 'zenquotes.io');
+        setSearchHint(cn ? '✅ 已从 ZenQuotes 获取并实时翻译' : '已获取（翻译暂不可用）');
+        gotFromWeb = true;
+      }
+    } catch(e) {}
 
-  // 并发请求多个源，取第一个成功的
-  var winner = null;
-  try {
-    winner = await new Promise(function(resolve, reject) {
-      var errors = 0;
-      ONLINE_SOURCES.forEach(function(src) {
-        src.fetch().then(function(r) { resolve({ result: r, name: src.name }); })
-          .catch(function() { errors++; if (errors >= ONLINE_SOURCES.length) reject(Error('all failed')); });
-      });
-    });
-  } catch(e) {}
+    if (!gotFromWeb) {
+      setSearchHint('⚠️ 互联网暂不可用，回退本地经济学库');
+      var unseen = economicsData.filter(function(q) { return !seen.has(q.cn); });
+      if (unseen.length) {
+        addOnlineCard(unseen[Math.floor(Math.random() * unseen.length)], '📚 本地经济学', '本地库');
+        setSearchHint('⚠️ 已从本地经济学库选取');
+      } else { setSearchHint('本地条目均已浏览'); }
+    }
 
-  if (winner) {
-    var en = winner.result.en;
-    var author = winner.result.author || '佚名';
-    var srcName = winner.result.source || winner.name;
-    var cn = await translateToChinese(en);
-    addApiCard({
-      cn: cn || en, en: en, author: author,
-      authorInfo: cn ? '来源: ' + srcName : '来源: ' + srcName + '（翻译暂不可用）'
-    }, '🌐 ' + srcName);
-    setSearchHint(cn ? '✅ 已从 ' + srcName + ' 获取并翻译' : '已从 ' + srcName + ' 获取（翻译暂不可用）');
   } else {
-    // 所有在线源失败，走本地
-    var d = getData();
-    var u = d.filter(function(q) { return !seen.has(q.cn); });
-    if (u.length) {
-      var p = u[Math.floor(Math.random() * u.length)];
-      addApiCard(p, '📚 本地精选');
-      setSearchHint('⚠️ 网络暂不可用，已从本地库选取（共 ' + d.length + ' 条）');
-    } else {
-      setSearchHint('⚠️ 网络暂不可用，且所有本地条目均已浏览');
+    // 名言：并发 ZenQuotes + PoetryDB
+    setSearchHint('🌐 从互联网实时获取...');
+    try {
+      var winner = await new Promise(function(resolve, reject) {
+        var done = false;
+        fetch(ZENQUOTES_RANDOM, { signal: AbortSignal.timeout(5000) })
+          .then(function(r) { if (!r.ok) throw Error(); return r.json(); })
+          .then(function(d) { if (!done) { done = true; resolve({ en: d[0].q, author: d[0].a, source: 'ZenQuotes' }); } })
+          .catch(function() {});
+        fetch(POETRYDB_RANDOM, { signal: AbortSignal.timeout(5000) })
+          .then(function(r) { if (!r.ok) throw Error(); return r.json(); })
+          .then(function(d) {
+            var lines = d[0].lines.slice(0, 2).join(' / ');
+            if (!done) { done = true; resolve({ en: lines, author: d[0].author, source: 'PoetryDB' }); }
+          })
+          .catch(function() {});
+        setTimeout(function() { if (!done) reject(Error('timeout')); }, 5500);
+      });
+      var en = winner.en, author = winner.author || '佚名', src = winner.source;
+      var cn = await translateToChinese(en);
+      addOnlineCard({
+        cn: cn || en, en: en, author: author,
+        authorInfo: cn ? '来源: ' + src + ' · 实时翻译' : '来源: ' + src + '（翻译暂不可用）'
+      }, '🌐 ' + src, src);
+      setSearchHint(cn ? '✅ 已从 ' + src + ' 获取并实时翻译' : '已从 ' + src + ' 获取');
+      gotFromWeb = true;
+    } catch(e) {}
+
+    if (!gotFromWeb) {
+      setSearchHint('⚠️ 互联网暂不可用，回退本地名言库');
+      var unseen = quotesData.filter(function(q) { return !seen.has(q.cn); });
+      if (unseen.length) {
+        addOnlineCard(unseen[Math.floor(Math.random() * unseen.length)], '📚 本地名言', '本地库');
+        setSearchHint('⚠️ 已从本地名言库选取');
+      } else { setSearchHint('本地条目均已浏览'); }
     }
   }
   showSpinner(false);
 }
 
+// ---- 🔍 搜索 | 仅搜索当前模式库（不跨库） ----
 function searchQuotes() {
   var query = document.getElementById('searchInput').value.trim().toLowerCase();
   if (!query) return;
-  var allData = quotesData.concat(economicsData).concat(poetryData);
-  var results = allData.filter(function(q) {
-    return q.cn.toLowerCase().indexOf(query) !== -1 ||
-           q.en.toLowerCase().indexOf(query) !== -1 ||
-           q.author.toLowerCase().indexOf(query) !== -1 ||
-           (q.authorInfo && q.authorInfo.toLowerCase().indexOf(query) !== -1);
-  });
+
+  var data = getData();
+  var seenInResults = {};
+  var results = [];
+  for (var i = 0; i < data.length; i++) {
+    var q = data[i];
+    if (seenInResults[q.cn]) continue;
+    if (q.cn.toLowerCase().indexOf(query) !== -1 ||
+        q.en.toLowerCase().indexOf(query) !== -1 ||
+        q.author.toLowerCase().indexOf(query) !== -1 ||
+        (q.authorInfo && q.authorInfo.toLowerCase().indexOf(query) !== -1)) {
+      results.push(q);
+      seenInResults[q.cn] = true;
+    }
+  }
+
   if (!results.length) {
-    setSearchHint('❌ 没有找到与「' + query + '」相关的结果，试试其他关键词');
+    var hint = '❌ 在当前模式库中未找到「' + query + '」';
+    if (currentMode === 'quotes') hint += ' — 名言库为中外名人名言。搜古诗请切换到「🏔 古诗」模式';
+    if (currentMode === 'economics') hint += ' — 经济学库为经济学概念与格言';
+    if (currentMode === 'poetry') hint += ' — 古诗库为唐宋诗词，请用诗人名/诗名/意象词搜索';
+    setSearchHint(hint);
     return;
   }
+
   var added = 0;
   for (var i = 0; i < results.length; i++) {
     if (seen.has(results[i].cn)) continue;
-    addApiCard(results[i], '🔍 搜索结果');
+    addOnlineCard(results[i], '🔍 搜索结果', '本地库');
     added++;
   }
-  setSearchHint('✅ 找到 ' + results.length + ' 条，新增 ' + added + ' 条');
+  var total = data.length;
+  setSearchHint('✅ 在当前库（共' + total + '条）中找到 ' + results.length + ' 条，新增 ' + added + ' 条');
 }
 
-// ======== 模式切换 ========
 function switchMode(mode) {
   if (currentMode === mode) return;
   // 关闭面板
