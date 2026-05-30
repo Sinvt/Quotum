@@ -570,8 +570,7 @@ function getData() { return currentMode === 'economics' ? economicsData : quotes
 function getStorageKeys() {
   return {
     history: currentMode === 'economics' ? 'quotum_eco_history' : 'quotum_quotes_history',
-    favorites: currentMode === 'economics' ? 'quotum_eco_favorites' : 'quotum_quotes_favorites',
-    seen: currentMode === 'economics' ? 'quotum_eco_seen' : 'quotum_quotes_seen'
+    favorites: currentMode === 'economics' ? 'quotum_eco_favorites' : 'quotum_quotes_favorites'
   };
 }
 
@@ -634,7 +633,6 @@ function deleteItem(type, data) {
     card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
     setTimeout(function() { card.remove(); }, 250);
     seen.delete(data.cn);
-    saveSeen(seen);
     if (type === 'api') { searchedCount = Math.max(0, searchedCount - 1); }
     updateStats(); updateBtnMore();
   } else if (type === 'history') {
@@ -700,13 +698,6 @@ function saveHistory(h) {
   try { localStorage.setItem(getStorageKeys().history, JSON.stringify(h)); } catch(e) {}
 }
 
-function loadSeen() {
-  try { return new Set(JSON.parse(localStorage.getItem(getStorageKeys().seen)) || []); } catch(e) { return new Set(); }
-}
-function saveSeen(s) {
-  try { localStorage.setItem(getStorageKeys().seen, JSON.stringify(Array.from(s))); } catch(e) {}
-}
-
 function buildCardHTML(q, badge) {
   return [
     badge ? '<div class="badge">' + badge + '</div>' : '',
@@ -738,9 +729,8 @@ var searchedCount = 0;
 
 function initDaily() {
   dailyItem = getDailyItem();
-  seen = loadSeen();
+  seen = new Set();
   seen.add(dailyItem.cn);
-  saveSeen(seen);
   extraCount = 0;
   searchedCount = 0;
 }
@@ -798,7 +788,6 @@ function addMoreQuotes() {
 
   var picked = available[Math.floor(Math.random() * available.length)];
   seen.add(picked.cn);
-  saveSeen(seen);
   extraCount++;
 
   var container = document.getElementById('container');
@@ -1005,7 +994,6 @@ function addApiCard(q, badgeText) {
   container.appendChild(card);
   searchedCount++;
   seen.add(q.cn);
-  saveSeen(seen);
   updateStats(); updateBtnMore();
 }
 
@@ -1076,8 +1064,6 @@ function searchQuotes() {
 // ======== 模式切换 ========
 function switchMode(mode) {
   if (currentMode === mode) return;
-  // 保存当前 seen
-  saveSeen(seen);
   // 关闭面板
   if (historyOpen) { historyOpen = false; document.getElementById('historyPanel').classList.remove('open'); document.querySelector('.btn-history').textContent = getHistoryLabel(); }
   if (favPanelOpen) { favPanelOpen = false; document.getElementById('favPanel').classList.remove('open'); document.getElementById('btnFavToggle').style.background = ''; document.querySelector('.btn-fav-panel').textContent = getFavLabel(); }
