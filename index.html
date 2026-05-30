@@ -346,22 +346,30 @@
     letter-spacing: 0.12em;
     font-style: italic;
     z-index: 10;
-    pointer-events: none;
+    cursor: default;
     opacity: 0.08;
     transition: all 0.5s ease;
   }
 
-  .watermark:hover {
+  .watermark:hover,
+  .watermark:active {
     opacity: 1;
     font-size: 1.05rem;
     color: var(--fav-active);
-    text-shadow: 0 0 12px rgba(255,107,138,0.5);
+    text-shadow: 0 0 14px rgba(255,107,138,0.6);
     letter-spacing: 0.18em;
   }
 
   @media (hover: none) and (pointer: coarse) {
-    .watermark { opacity: 0.42; font-size: 0.7rem; }
+    .watermark { opacity: 0.35; font-size: 0.68rem; }
+    .watermark:active {
+      opacity: 1;
+      font-size: 1.05rem;
+      color: var(--fav-active);
+      text-shadow: 0 0 14px rgba(255,107,138,0.6);
+    }
   }
+
 </style>
 </head>
 <body>
