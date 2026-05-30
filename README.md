@@ -1,8 +1,23 @@
 # Quotum · 每日双语名言 & 经济学知识
 
-> 📖 A daily dose of bilingual wisdom — quotes and economics knowledge, online and offline.
+> A zero-dependency web app that delivers a daily bilingual (Chinese + English) quote and a piece of economics knowledge.
 
-> 📖 每日一句双语名言 + 经济学知识，支持联网搜索与离线浏览。
+> 每天为你推送一条双语（中英）名言与一则经济学知识的纯前端网页应用。
+
+**在线访问 | Live demo:** https://sinvt.github.io/Quotum/
+
+---
+
+## 💡 它适合谁 | Use Cases
+
+- **想培养每日习惯的人** — 每天打开看一条，像撕日历一样为一天定个基调。
+  *A daily ritual — one card each morning to set the tone for your day.*
+- **跨领域的终身学习者** — 经济学模式可当作「知识闪卡」，每天一个核心概念（机会成本、看不见的手、复利……），看到不熟的点开简介，配合收藏夹复习。
+  *A flashcard for lifelong learners — pick up one economics concept a day and review favorites over time.*
+- **需要双语素材的人** — 写作、做幻灯片、社交媒体配文时，用搜索快速找到合适的中英双语句子。
+  *A quick source of bilingual material for writing, slides, and posts.*
+- **需要一点鼓励的时刻** — 随机抽一条，也许正好戳中；收藏夹是你专属的打气合集。
+  *A small pick-me-up — pull a random card when you need one.*
 
 ---
 
@@ -10,50 +25,60 @@
 
 | 功能 | Feature | 说明 |
 |---|---|---|
-| 💬 名言模式 | Quotes Mode | 每日推送一条双语名言（50 条精选库） |
-| 📈 经济学模式 | Economics Mode | 每日推送一条经济学知识（45 条精选库） |
-| 🎲 随机获取 | Random Fetch | 同时向 ZenQuotes / PoetryDB / Wikipedia 三个 API 并发请求，取最快返回结果，中英双语 |
-| 🔍 本地搜索 | Local Search | 在全部条目中按中英文 / 作者 / 简介即时搜索 |
-| ❤️ 收藏夹 | Favorites | 收藏喜欢的条目，两个模式各自独立存储 |
-| 📅 历史记录 | History | 每日名言/知识自动记录，支持翻看过往 |
-| ✏️ 手动添加 | Add Custom | 自定义名言或知识条目 |
-| 🌙 夜间/日间模式 | Dark/Light Mode | 一键切换，偏好自动保存 |
-| 📱 响应式设计 | Responsive | 手机 / 平板 / 桌面均可使用 |
-| 🌐 智能回退 | Smart Fallback | 联网失败时自动从本地库选取，保证内容不中断 |
+| 💬 名言模式 | Quotes | 每日推送一条中外名人双语名言 |
+| 📈 经济学模式 | Economics | 每日推送一则经济学概念或格言，附背景简介 |
+| 📅 每日推送 | Daily Pick | 基于日期的确定性算法，每天固定一条 |
+| ➕ 再来一条 | Show More | 手动浏览库中更多条目 |
+| 🎲 随机获取 | Random Fetch | 并发请求多个公开 API，取最快返回，自动翻译为中文 |
+| 🔍 搜索 | Search | 按中英文 / 作者 / 简介在库中即时检索 |
+| ❤️ 收藏夹 | Favorites | 收藏喜欢的条目，两个模式各自独立 |
+| 🗂 历史记录 | History | 自动记录每日内容，可随时回看 |
+| ✏️ 手动添加 | Add Custom | 添加你自己的名言或知识条目 |
+| 🗑 删除 | Delete | 卡片、历史、收藏均可删除 |
+| 🌙 日夜模式 | Dark / Light | 一键切换主题，偏好自动保存 |
+| 📱 响应式 | Responsive | 手机 / 平板 / 桌面自适应 |
+| 🌐 智能回退 | Smart Fallback | 联网失败时自动从本地库选取，内容不中断 |
 
 ---
 
-## 🚀 如何使用 | How to Use
+## 🚀 使用方式 | Getting Started
 
-### 在线访问 | Online
-
-直接打开浏览器访问：
+**在线访问** — 直接打开浏览器：
 
 ```
 https://sinvt.github.io/Quotum/
 ```
 
-### 本地使用 | Local
+**本地运行** — 克隆后双击 `index.html` 即可，无需任何构建步骤：
 
 ```bash
 git clone https://github.com/Sinvt/Quotum.git
 cd Quotum
-# 双击 index.html 即可
-# Or double-click index.html
+# 双击 index.html / open index.html
 ```
 
 ---
 
 ## 🛠 技术栈 | Tech Stack
 
-| 层 | 技术 | Technology |
-|---|---|---|
-| 前端框架 | 纯 HTML/CSS/JS (零依赖) | Vanilla HTML/CSS/JS (zero dependencies) |
-| 数据存储 | 浏览器 localStorage | Browser localStorage |
-| 名言数据源 | 内置精选库 (95 条) | Built-in curated library (95 items) |
-| 在线 API | ZenQuotes / PoetryDB / Wikipedia | ZenQuotes / PoetryDB / Wikipedia |
-| 翻译引擎 | MyMemory Translation API | MyMemory Translation API |
-| 部署 | GitHub Pages | GitHub Pages |
+| 层 | Technology |
+|---|---|
+| 前端 | Vanilla HTML / CSS / JavaScript（零依赖，无框架、无构建工具） |
+| 存储 | 浏览器 localStorage（收藏、历史、主题偏好均存于本地） |
+| 在线源 | ZenQuotes / PoetryDB / Wikipedia（多源并发，最快优先） |
+| 翻译 | MyMemory Translation API |
+| 部署 | GitHub Pages |
+
+---
+
+## 🎯 设计理念 | Design Principles
+
+- **零依赖** — 不需要 npm、框架或后端，一个 HTML 文件即是全部应用。
+- **离线优先** — 内置精选内容库，无网络也能正常使用。
+- **多源并发** — 联网时同时请求多个公开 API，最快返回者优先。
+- **隐私至上** — 所有数据仅保存在你的浏览器本地，不上传、不追踪。
+
+> Zero dependencies · Offline-first · Multi-source concurrency · Privacy by default.
 
 ---
 
@@ -61,27 +86,12 @@ cd Quotum
 
 ```
 Quotum/
-├── index.html    ← 全部代码（单文件应用）| Single-file application
-└── README.md     ← 本文件 | This file
+├── index.html    单文件应用（含全部 HTML / CSS / JS）
+└── README.md
 ```
 
 ---
 
-## 🎯 设计理念 | Design Philosophy
-
-- **零依赖** — 不需要 npm、不需要构建工具、不需要后端服务器
-- **离线优先** — 本地 95 条精选内容确保无网络也能使用
-- **多源并发** — 联网时从多个 API 同时获取，最快响应优先
-- **隐私第一** — 所有数据保存在用户浏览器本地，不上传任何信息
-
-> Zero dependencies, offline-first, multi-source concurrency, privacy-first.
-
----
-
-## 📄 许可 | License
+## 📄 License
 
 MIT
-
----
-
-*Made with ❤️ by Sinvt · Powered by vanilla HTML/CSS/JS*
