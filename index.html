@@ -794,7 +794,7 @@ function saveCustomQuote() {
 }
 
 // ======== 在线获取 + 搜索 ========
-var QUOTABLE_API = 'https://api.quotable.io';
+var ZENQUOTES_API = 'https://zenquotes.io/api/random';
 var TRANSLATE_API = 'https://api.mymemory.translated.net/get';
 
 function showSpinner(s) { document.getElementById('spinner').style.display = s ? 'block' : 'none'; }
@@ -827,13 +827,13 @@ function addApiCard(q) {
 
 async function fetchRandomOnline() {
   showSpinner(true);
-  setSearchHint('正在从网络获取...');
+  setSearchHint('正在从网络获取随机名言...');
   try {
-    var query = currentMode === 'economics' ? 'economics' : 'wisdom';
-    var resp = await fetch(QUOTABLE_API + '/random?tags=' + query);
-    if (!resp.ok) resp = await fetch(QUOTABLE_API + '/random');
+    var resp = await fetch(ZENQUOTES_API);
+    if (!resp.ok) throw new Error('API error');
     var data = await resp.json();
-    var en = data.content, author = data.author || '佚名';
+    if (!data || !data.length) throw new Error('Empty response');
+    var en = data[0].q, author = data[0].a || '佚名';
     var cn = await translateToChinese(en);
     addApiCard({ cn:cn||en, en:en, author:author, authorInfo:cn?'':'翻译暂不可用，仅显示原文' });
     setSearchHint(cn ? '已随机获取并翻译' : '已获取（翻译暂不可用）');
@@ -841,26 +841,29 @@ async function fetchRandomOnline() {
   showSpinner(false);
 }
 
-async function searchQuotes() {
-  var query = document.getElementById('searchInput').value.trim();
+function searchQuotes() {
+  var query = document.getElementById('searchInput').value.trim().toLowerCase();
   if (!query) return;
-  showSpinner(true);
-  setSearchHint('正在搜索「' + query + '」...');
-  try {
-    var resp = await fetch(QUOTABLE_API + '/search/quotes?query=' + encodeURIComponent(query) + '&limit=5');
-    var data = await resp.json();
-    if (!data.results || !data.results.length) {
-      setSearchHint('没有找到与「' + query + '」相关的结果');
-      showSpinner(false); return;
-    }
-    for (var i = 0; i < data.results.length; i++) {
-      var item = data.results[i];
-      var cnResult = await translateToChinese(item.content);
-      addApiCard({ cn:cnResult||item.content, en:item.content, author:item.author||'佚名', authorInfo:cnResult?'':'翻译暂不可用' });
-    }
-    setSearchHint('已找到 ' + data.results.length + ' 条与「' + query + '」相关的结果');
-  } catch(e) { setSearchHint('搜索请求失败，请检查网络后重试'); }
-  showSpinner(false);
+
+  // 客户端搜索：从全部数据中查找
+  var allData = quotesData.concat(economicsData);
+  var results = allData.filter(function(q) {
+    return q.cn.toLowerCase().indexOf(query) !== -1 ||
+           q.en.toLowerCase().indexOf(query) !== -1 ||
+           q.author.toLowerCase().indexOf(query) !== -1 ||
+           (q.authorInfo && q.authorInfo.toLowerCase().indexOf(query) !== -1);
+  });
+
+  setSearchHint(results.length ? '找到 ' + results.length + ' 条与「' + query + '」相关的结果' : '没有找到与「' + query + '」相关的结果');
+
+  for (var i = 0; i < results.length; i++) {
+    var q = results[i];
+    if (seen.has(q.cn)) continue;
+    addApiCard(q);
+    q._fromSearch = true;
+  }
+
+  if (!results.length) showSpinner(false);
 }
 
 // ======== 模式切换 ========
