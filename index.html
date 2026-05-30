@@ -347,12 +347,17 @@
     font-style: italic;
     z-index: 10;
     pointer-events: none;
-    opacity: 0.18;
-    transition: opacity 1.5s ease, color 0.5s;
+    opacity: 0.12;
+    transition: opacity 0.8s ease, color 0.5s;
   }
 
   .watermark:hover {
-    opacity: 0.7;
+    opacity: 0.75;
+  }
+
+  /* 手机端(无悬停)始终可见 */
+  @media (hover: none) and (pointer: coarse) {
+    .watermark { opacity: 0.42; }
   }
 </style>
 </head>
