@@ -42,6 +42,8 @@
     --tab-hover-bg: rgba(255,255,255,0.06);
     --eco-accent: rgba(76,175,80,0.6);
     --eco-border: rgba(76,175,80,0.15);
+    --poetry-accent: rgba(200,160,100,0.65);
+    --poetry-border: rgba(200,160,100,0.18);
     --api-border: rgba(100,200,255,0.15);
   }
 
@@ -357,6 +359,9 @@
   .eco-card { border-left: 3px solid var(--eco-border); }
   .eco-card .badge { color: var(--eco-accent); }
 
+  .poetry-card { border-left: 3px solid var(--poetry-border); }
+  .poetry-card .badge { color: var(--poetry-accent); }
+
   .watermark {
     position: fixed;
     bottom: 18px;
@@ -407,6 +412,7 @@
 <div class="tab-bar">
   <button class="tab-btn active" id="tabQuotes" onclick="switchMode('quotes')">💬 名言</button>
   <button class="tab-btn" id="tabEco" onclick="switchMode('economics')">📈 经济学</button>
+  <button class="tab-btn" id="tabPoetry" onclick="switchMode('poetry')">🏔 古诗</button>
 </div>
 
 <div class="search-bar">
@@ -547,6 +553,39 @@ const economicsData = [
   { cn:"一个好的税收制度应该像拔鹅毛一样：拔最多的毛，让鹅叫得最少。", en:"The art of taxation consists in so plucking the goose as to obtain the largest amount of feathers with the least amount of hissing.", author:"让-巴蒂斯特·科尔贝 (Jean-Baptiste Colbert)", authorInfo:"法国路易十四时期的财政大臣，这句名言道出了税收设计的核心理念" }
 ];
 
+const poetryData = [
+  { cn:"床前明月光，疑是地上霜。举头望明月，低头思故乡。", en:"Moonlight before my bed — perhaps frost on the ground. Lift my head and see the moon; lower my head and think of home.", author:"李白《静夜思》", authorInfo:"唐代最伟大的浪漫主义诗人，被誉「诗仙」" },
+  { cn:"春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。", en:"Spring morning — no knowing when dawn came. Everywhere the birds are singing. Last night the sound of wind and rain — how many flowers have fallen?", author:"孟浩然《春晓》", authorInfo:"唐代山水田园诗人，与王维并称「王孟」" },
+  { cn:"白日依山尽，黄河入海流。欲穷千里目，更上一层楼。", en:"The white sun sets behind the mountains; the Yellow River flows into the sea. To see a thousand miles further, climb one more story.", author:"王之涣《登鹳雀楼》", authorInfo:"唐代边塞诗人，存诗仅六首，却因《凉州词》与《登鹳雀楼》千古流传" },
+  { cn:"独在异乡为异客，每逢佳节倍思亲。遥知兄弟登高处，遍插茱萸少一人。", en:"Alone, a stranger in a strange land — on every festival my longing doubles. I know my brothers climb the heights, all wearing dogwood — but one is missing.", author:"王维《九月九日忆山东兄弟》", authorInfo:"唐代诗人、画家，被誉「诗佛」，苏东坡称其「诗中有画，画中有诗」" },
+  { cn:"千山鸟飞绝，万径人踪灭。孤舟蓑笠翁，独钓寒江雪。", en:"A thousand mountains — no sign of birds; ten thousand paths — no trace of men. A lone boat, an old man in straw cloak and hat, fishing alone in the cold river snow.", author:"柳宗元《江雪》", authorInfo:"唐代文学家，「唐宋八大家」之一，因参与永贞革新被贬" },
+  { cn:"锄禾日当午，汗滴禾下土。谁知盘中餐，粒粒皆辛苦。", en:"Hoeing millet under the midday sun, sweat dripping into the soil. Who knows that every grain on the plate comes from bitter toil?", author:"李绅《悯农》", authorInfo:"唐代诗人，与元稹、白居易共倡新乐府运动" },
+  { cn:"离离原上草，一岁一枯荣。野火烧不尽，春风吹又生。", en:"Grass on the plain — lush, lush. Each year it withers, then flourishes again. Wildfire cannot burn it out; the spring wind blows and it lives once more.", author:"白居易《赋得古原草送别》", authorInfo:"唐代现实主义诗人，倡导「文章合为时而著，歌诗合为事而作」" },
+  { cn:"红豆生南国，春来发几枝。愿君多采撷，此物最相思。", en:"Red berries grow in the southern land — in spring they flourish on every branch. I wish you would gather more of them; they are the best token of longing.", author:"王维《相思》", authorInfo:"又名《江上赠李龟年》，以红豆寄相思，千古传诵" },
+  { cn:"大漠孤烟直，长河落日圆。萧关逢候骑，都护在燕然。", en:"In the vast desert, a lone column of smoke rises straight; over the long river, the setting sun hangs round.", author:"王维《使至塞上》", authorInfo:"此联为千古写景名句，「直」与「圆」二字被誉为神来之笔" },
+  { cn:"海上生明月，天涯共此时。情人怨遥夜，竟夕起相思。", en:"Over the sea the bright moon rises; at the edge of the world we share this moment. Lovers resent the long night — all night their yearning stirs.", author:"张九龄《望月怀远》", authorInfo:"唐代名相、诗人，开元盛世最后一位贤相" },
+  { cn:"两个黄鹂鸣翠柳，一行白鹭上青天。窗含西岭千秋雪，门泊东吴万里船。", en:"Two golden orioles sing in the green willows; a line of white egrets climbs the blue sky. My window frames the western peaks' eternal snow; my door holds boats bound for far-off Wu.", author:"杜甫《绝句》", authorInfo:"唐代「诗圣」，与李白并称「李杜」，其诗被誉为「诗史」" },
+  { cn:"好雨知时节，当春乃发生。随风潜入夜，润物细无声。", en:"Good rain knows its season — it arrives with spring. Riding the wind, it slips into the night; it moistens all things silently, without a sound.", author:"杜甫《春夜喜雨》", authorInfo:"此诗写于成都草堂时期，「润物细无声」已成中国文化中默默奉献的代名词" },
+  { cn:"国破山河在，城春草木深。感时花溅泪，恨别鸟惊心。", en:"The nation is broken — mountains and rivers remain. Spring in the city — grass and trees grow thick. Grieving the times, even flowers bring tears; hating separation, every bird startles the heart.", author:"杜甫《春望》", authorInfo:"安史之乱期间所作，家国之痛凝结于四十字中" },
+  { cn:"人闲桂花落，夜静春山空。月出惊山鸟，时鸣春涧中。", en:"At leisure, I watch osmanthus blossoms fall; the night is still, the spring hills are empty. The rising moon startles mountain birds — now and then they sing in the spring stream.", author:"王维《鸟鸣涧》", authorInfo:"以动衬静的典范——花落、月出、鸟鸣，皆是禅意" },
+  { cn:"横看成岭侧成峰，远近高低各不同。不识庐山真面目，只缘身在此山中。", en:"From the side, a ridge; from the front, a peak. Far, near, high, low — each gives a different view. Why can't I see Mount Lu's true face? Because I am standing in the middle of it.", author:"苏轼《题西林壁》", authorInfo:"宋代文学大家，「不识庐山真面目」已成为关于视角与局限的哲学格言" },
+  { cn:"明月几时有，把酒问青天。不知天上宫阙，今夕是何年。", en:"When did the bright moon first appear? Raising my cup, I ask the blue sky. In the celestial palaces, what year is it tonight?", author:"苏轼《水调歌头》", authorInfo:"中秋怀人之作，「但愿人长久，千里共婵娟」即为词末两句" },
+  { cn:"枯藤老树昏鸦，小桥流水人家，古道西风瘦马。夕阳西下，断肠人在天涯。", en:"Withered vines, old trees, crows at dusk. A little bridge, a flowing stream, a cottage. An ancient road, the west wind, a lean horse. The sun sets in the west — a heartbroken man at the edge of the world.", author:"马致远《天净沙·秋思》", authorInfo:"元曲四大家之一，这首小令被誉为「秋思之祖」" },
+  { cn:"问君能有几多愁，恰似一江春水向东流。", en:"If you ask me how much sorrow I bear — it's like a whole river of spring water flowing east.", author:"李煜《虞美人》", authorInfo:"南唐后主，词中之帝，亡国后词作境界大开，千古绝唱" },
+  { cn:"醉卧沙场君莫笑，古来征战几人回。", en:"Don't laugh if I lie drunk on the battlefield — since ancient times, how many soldiers have ever returned?", author:"王翰《凉州词》", authorInfo:"唐代边塞诗人，此诗以豪放写悲壮，直击人心" },
+  { cn:"桃花潭水深千尺，不及汪伦送我情。", en:"The Peach Blossom Pool is a thousand feet deep — yet not as deep as Wang Lun's farewell to me.", author:"李白《赠汪伦》", authorInfo:"李白乘舟将行，挚友汪伦踏歌相送，即成千古绝唱" },
+  { cn:"大江东去，浪淘尽，千古风流人物。", en:"The great river flows east — its waves have washed away all the heroes of a thousand ages.", author:"苏轼《念奴娇·赤壁怀古》", authorInfo:"豪放词开山之作，写三国赤壁，写人生况味" },
+  { cn:"山重水复疑无路，柳暗花明又一村。", en:"Mountains multiply, rivers double back — you think there is no road. Then through dark willows and bright flowers, another village appears.", author:"陆游《游山西村》", authorInfo:"南宋爱国诗人，一生作诗近万首，此联已成为绝境逢生的经典意象" },
+  { cn:"落霞与孤鹜齐飞，秋水共长天一色。", en:"A falling cloud and a solitary wild duck fly together; the autumn water and the vast sky are one color.", author:"王勃《滕王阁序》", authorInfo:"初唐四杰之首，二十六岁作此骈文千古名篇，次年溺水而亡" },
+  { cn:"天生我材必有用，千金散尽还复来。", en:"Heaven has given me talents — they must be of use. A thousand gold coins spent will all come back again.", author:"李白《将进酒》", authorInfo:"李白最豪迈的诗篇之一，纵酒放歌中藏着怀才不遇的悲愤" },
+  { cn:"会当凌绝顶，一览众山小。", en:"I will surely stand atop the highest peak, and behold all the mountains below as small.", author:"杜甫《望岳》", authorInfo:"青年杜甫游泰山之作，气象磅礴，壮志凌云" },
+  { cn:"此情可待成追忆，只是当时已惘然。", en:"This feeling could have become a cherished memory — but even then, I was already lost and bewildered.", author:"李商隐《锦瑟》", authorInfo:"晚唐最富才情的诗人之一，其诗朦胧深婉，意境幽远" },
+  { cn:"采菊东篱下，悠然见南山。", en:"I pick chrysanthemums by the eastern hedge — and gaze, unhurried, at the southern hills.", author:"陶渊明《饮酒》", authorInfo:"东晋诗人，「古今隐逸诗人之宗」，开创田园诗派" },
+  { cn:"长风破浪会有时，直挂云帆济沧海。", en:"There will come a time to ride the long wind and cleave the waves — I'll hoist my cloud-like sail and cross the vast blue sea.", author:"李白《行路难》", authorInfo:"「行路难」却从不放弃，李白的乐观与豪情贯穿全篇" },
+  { cn:"露从今夜白，月是故乡明。", en:"Tonight the dew begins to turn white — the moon over my homeland is the brightest.", author:"杜甫《月夜忆舍弟》", authorInfo:"安史之乱中与兄弟失散，白露之夜望月思人" },
+  { cn:"春风得意马蹄疾，一日看尽长安花。", en:"The spring breeze carries my elation — my horse gallops swiftly; in a single day, I've seen every flower in Chang'an.", author:"孟郊《登科后》", authorInfo:"唐代诗人，四十六岁终于科举及第时的狂喜之作" }
+];
+
 // ======== 主题 ========
 const THEME_KEY = 'quotum_theme';
 function loadTheme() { return localStorage.getItem(THEME_KEY) || 'dark'; }
@@ -565,26 +604,47 @@ applyTheme(loadTheme());
 // ======== 当前模式 ========
 var currentMode = 'quotes'; // 'quotes' | 'economics'
 
-function getData() { return currentMode === 'economics' ? economicsData : quotesData; }
+function getData() {
+  if (currentMode === 'economics') return economicsData;
+  if (currentMode === 'poetry') return poetryData;
+  return quotesData;
+}
 
 function getStorageKeys() {
-  return {
-    history: currentMode === 'economics' ? 'quotum_eco_history' : 'quotum_quotes_history',
-    favorites: currentMode === 'economics' ? 'quotum_eco_favorites' : 'quotum_quotes_favorites'
-  };
+  var pfx;
+  if (currentMode === 'economics') pfx = 'quotum_eco';
+  else if (currentMode === 'poetry') pfx = 'quotum_poetry';
+  else pfx = 'quotum_quotes';
+  return { history: pfx + '_history', favorites: pfx + '_favorites' };
 }
 
-function getBadgeLabel() { return currentMode === 'economics' ? '今日经济学' : '今日名言'; }
-function getSearchPlaceholder() {
-  return currentMode === 'economics'
-    ? '搜索经济学知识，如 supply demand、inflation、GDP...'
-    : '搜索名言关键字，如 love、courage、wisdom...';
+function getBadgeLabel() {
+  if (currentMode === 'economics') return '今日经济学';
+  if (currentMode === 'poetry') return '今日古诗';
+  return '今日名言';
 }
-function getFormTitle() { return currentMode === 'economics' ? '添加经济学知识' : '添加名言'; }
-function getFormLabel() { return currentMode === 'economics' ? '来源/出处' : '作者'; }
+function getSearchPlaceholder() {
+  if (currentMode === 'economics') return '搜索经济学知识，如 supply demand、inflation、GDP...';
+  if (currentMode === 'poetry') return '搜索古诗，如 李白、春、月、离别、怀古...';
+  return '搜索名言关键字，如 love、courage、wisdom...';
+}
+function getFormTitle() {
+  if (currentMode === 'economics') return '添加经济学知识';
+  if (currentMode === 'poetry') return '添加古诗';
+  return '添加名言';
+}
+function getFormLabel() {
+  if (currentMode === 'economics') return '来源/出处';
+  if (currentMode === 'poetry') return '朝代/诗人';
+  return '作者';
+}
 function getEmptyHistoryMsg() { return currentMode === 'economics' ? '暂无历史记录，明天再来吧' : '暂无历史记录，明天再来吧'; }
 function getEmptyFavMsg() { return currentMode === 'economics' ? '还没有收藏，点击 ♡ 来收藏吧' : '还没有收藏的名言，点击 ♡ 来收藏吧'; }
-function getAddLabel() { return currentMode === 'economics' ? '✏️ 添加知识' : '✏️ 添加名言'; }
+function getAddLabel() {
+  if (currentMode === 'economics') return '✏️ 添加知识';
+  if (currentMode === 'poetry') return '✏️ 添加古诗';
+  return '✏️ 添加名言';
+}
 function getHistoryLabel() { return '📅 历史记录'; }
 function getFavLabel() { return '❤️ 我的收藏'; }
 
@@ -743,6 +803,7 @@ function renderAll() {
   var card = document.createElement('div');
   card.className = 'card daily';
   if (currentMode === 'economics') card.classList.add('eco-card');
+  if (currentMode === 'poetry') card.classList.add('poetry-card');
   card.innerHTML = buildCardHTML(dailyItem, getBadgeLabel());
   var favBtn = makeFavBtn(dailyItem);
   favBtn.setAttribute('data-cn', dailyItem.cn);
@@ -794,6 +855,7 @@ function addMoreQuotes() {
   var card = document.createElement('div');
   card.className = 'card extra';
   if (currentMode === 'economics') card.classList.add('eco-card');
+  if (currentMode === 'poetry') card.classList.add('poetry-card');
   card.innerHTML = buildCardHTML(picked, '#' + (extraCount + searchedCount + 1));
   var favBtn = makeFavBtn(picked);
   favBtn.setAttribute('data-cn', picked.cn);
@@ -986,6 +1048,7 @@ function addApiCard(q, badgeText) {
   var card = document.createElement('div');
   card.className = 'api-card';
   if (currentMode === 'economics') card.classList.add('eco-card');
+  if (currentMode === 'poetry') card.classList.add('poetry-card');
   card.innerHTML = buildApiCardHTML(q, badgeText);
   var favBtn = makeFavBtn(q);
   favBtn.setAttribute('data-cn', q.cn);
@@ -1073,6 +1136,7 @@ function switchMode(mode) {
   // 更新UI文字
   document.getElementById('tabQuotes').classList.toggle('active', mode === 'quotes');
   document.getElementById('tabEco').classList.toggle('active', mode === 'economics');
+  document.getElementById('tabPoetry').classList.toggle('active', mode === 'poetry');
   document.getElementById('searchInput').placeholder = getSearchPlaceholder();
   document.getElementById('formTitle').textContent = getFormTitle();
   document.getElementById('labelAuthor').textContent = getFormLabel();
