@@ -154,6 +154,28 @@
   .card .fav-btn:hover { opacity: 0.8; transform: scale(1.15); }
   .card .fav-btn.faved { opacity: 1; color: var(--fav-active); }
 
+  .card .del-btn {
+    position: absolute; top: 16px; left: 20px;
+    background: none; border: none; font-size: 0.85rem;
+    cursor: pointer; opacity: 0; transition: all 0.25s;
+    color: var(--text-muted); font-family: inherit;
+    padding: 2px 6px; border-radius: 12px;
+  }
+
+  .card:hover .del-btn,
+  .history-card:hover .del-btn { opacity: 0.35; }
+
+  .card .del-btn:hover,
+  .history-card .del-btn:hover { opacity: 1; color: #e05555; background: rgba(224,85,85,0.12); }
+
+  .history-card .del-btn {
+    position: absolute; top: 10px; left: 16px;
+    background: none; border: none; font-size: 0.8rem;
+    cursor: pointer; opacity: 0; transition: all 0.25s;
+    color: var(--text-muted); font-family: inherit;
+    padding: 2px 6px; border-radius: 12px;
+  }
+
   .card.daily {
     border: 1px solid var(--daily-border);
     box-shadow: var(--card-shadow), var(--daily-glow);
@@ -590,8 +612,63 @@ function makeFavBtn(q) {
   var btn = document.createElement('button');
   btn.className = 'fav-btn' + (isFaved(q) ? ' faved' : '');
   btn.textContent = isFaved(q) ? '❤️' : '♡';
-  btn.onclick = function(e) { e.stopPropagation(); toggleFav(q); };
+  btn.addEventListener('click', function(e) { e.stopPropagation(); toggleFav(q); });
   return btn;
+}
+
+function makeDelBtn(type, data) {
+  var btn = document.createElement('button');
+  btn.className = 'del-btn';
+  btn.title = '删除';
+  btn.textContent = '🗑';
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    deleteItem(type, data);
+  });
+  return btn;
+}
+
+function deleteItem(type, data) {
+  if (type === 'extra' || type === 'api') {
+    // 删除主区域卡片
+    var card = data.el.closest('.card, .api-card');
+    if (!card) return;
+    card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
+    setTimeout(function() { card.remove(); }, 250);
+    seen.delete(data.cn);
+    saveSeen(seen);
+    if (type === 'api') { searchedCount = Math.max(0, searchedCount - 1); }
+    updateStats(); updateBtnMore();
+  } else if (type === 'history') {
+    // 删除历史记录中的条目
+    var card = data.el.closest('.history-card');
+    if (!card) return;
+    card.style.opacity = '0';
+    setTimeout(function() { card.remove(); }, 250);
+    var history = loadHistory();
+    var keys = Object.keys(history);
+    for (var i = 0; i < keys.length; i++) {
+      if (history[keys[i]].cn === data.cn) { delete history[keys[i]]; break; }
+    }
+    saveHistory(history);
+    // 如果面板空了，显示空状态
+    setTimeout(function() {
+      if (!document.querySelector('#historyPanel .history-card')) renderHistory();
+    }, 300);
+  } else if (type === 'fav') {
+    // 从收藏中删除
+    var card = data.el.closest('.history-card');
+    if (!card) return;
+    card.style.opacity = '0';
+    setTimeout(function() { card.remove(); }, 250);
+    var favs = loadFavorites();
+    var idx = favs.findIndex(function(f) { return f.cn === data.cn; });
+    if (idx >= 0) { favs.splice(idx, 1); saveFavorites(favs); }
+    refreshAllFavButtons();
+    setTimeout(function() {
+      if (!document.querySelector('#favPanel .history-card')) renderFavPanel();
+    }, 300);
+  }
 }
 function refreshAllFavButtons() {
   document.querySelectorAll('.fav-btn').forEach(function(btn) {
@@ -734,6 +811,7 @@ function addMoreQuotes() {
   var favBtn = makeFavBtn(picked);
   favBtn.setAttribute('data-cn', picked.cn);
   card.appendChild(favBtn);
+  card.appendChild(makeDelBtn('extra', { el: card, cn: picked.cn }));
   container.appendChild(card);
 
   updateStats(); updateBtnMore();
@@ -783,6 +861,7 @@ function renderHistory() {
         var favBtn = makeFavBtn(hist[keys[i]]);
         favBtn.setAttribute('data-cn', cn);
         card.appendChild(favBtn);
+        card.appendChild(makeDelBtn('history', { el: card, cn: cn }));
         break;
       }
     }
@@ -830,6 +909,7 @@ function renderFavPanel() {
     var favBtn = makeFavBtn(favs[i]);
     favBtn.setAttribute('data-cn', favs[i].cn);
     card.appendChild(favBtn);
+    card.appendChild(makeDelBtn('fav', { el: card, cn: favs[i].cn }));
   });
 }
 
@@ -923,6 +1003,7 @@ function addApiCard(q, badgeText) {
   var favBtn = makeFavBtn(q);
   favBtn.setAttribute('data-cn', q.cn);
   card.appendChild(favBtn);
+  card.appendChild(makeDelBtn('api', { el: card, cn: q.cn }));
   container.appendChild(card);
   searchedCount++;
   seen.add(q.cn);
