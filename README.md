@@ -1,8 +1,8 @@
-# Quotum · 每日双语名言 & 经济学知识
+# Quotum · 每日双语名言 & 古诗 & 经济学知识
 
-> A zero-dependency web app that delivers a daily bilingual (Chinese + English) quote and a piece of economics knowledge.
+> A zero-dependency web app delivering daily bilingual wisdom — quotes, classical Chinese poetry, and economics.
 
-> 每天为你推送一条双语（中英）名言与一则经济学知识的纯前端网页应用。
+> 每天为你推送双语（中英）名言、中国古典诗词与经济学知识的纯前端网页应用。
 
 **在线访问 | Live demo:** https://sinvt.github.io/Quotum/
 
@@ -18,6 +18,8 @@
   *A quick source of bilingual material for writing, slides, and posts.*
 - **需要一点鼓励的时刻** — 随机抽一条，也许正好戳中；收藏夹是你专属的打气合集。
   *A small pick-me-up — pull a random card when you need one.*
+- **品味中国古典诗词的人** — 每天一首李白、杜甫、苏轼……中英双语对照，在工科日常里留一扇看往千年之前的窗。
+  *A window into classical Chinese poetry — one poem a day with English translation.*
 
 ---
 
@@ -26,18 +28,19 @@
 | 功能 | Feature | 说明 |
 |---|---|---|
 | 💬 名言模式 | Quotes | 每日推送一条中外名人双语名言 |
+| 🏔 古诗模式 | Poetry | 每日推送一首中国古典诗词（李白/杜甫/苏轼……），中英双语 |
 | 📈 经济学模式 | Economics | 每日推送一则经济学概念或格言，附背景简介 |
 | 📅 每日推送 | Daily Pick | 基于日期的确定性算法，每天固定一条 |
 | ➕ 再来一条 | Show More | 手动浏览库中更多条目 |
-| 🎲 随机获取 | Random Fetch | 并发请求多个公开 API，取最快返回，自动翻译为中文 |
-| 🔍 搜索 | Search | 按中英文 / 作者 / 简介在库中即时检索 |
-| ❤️ 收藏夹 | Favorites | 收藏喜欢的条目，两个模式各自独立 |
+| 🎲 随机获取 | Random Fetch | 互联网实时获取 — 古诗用 jinrishici.com，名言/经济学用 ZenQuotes + PoetryDB 多源并发 |
+| 🔍 搜索 | Search | 按关键字在当前模式库中检索（模式隔离，名言不会搜出诗句） |
+| ❤️ 收藏夹 | Favorites | 收藏喜欢的条目，三个模式各自独立 |
 | 🗂 历史记录 | History | 自动记录每日内容，可随时回看 |
-| ✏️ 手动添加 | Add Custom | 添加你自己的名言或知识条目 |
+| ✏️ 手动添加 | Add Custom | 添加你自己的名言、诗词或知识条目 |
 | 🗑 删除 | Delete | 卡片、历史、收藏均可删除 |
 | 🌙 日夜模式 | Dark / Light | 一键切换主题，偏好自动保存 |
 | 📱 响应式 | Responsive | 手机 / 平板 / 桌面自适应 |
-| 🌐 智能回退 | Smart Fallback | 联网失败时自动从本地库选取，内容不中断 |
+| 🌐 智能回退 | Smart Fallback | 联网失败时自动从本地精选库选取，内容不中断 |
 
 ---
 
@@ -65,7 +68,7 @@ cd Quotum
 |---|---|
 | 前端 | Vanilla HTML / CSS / JavaScript（零依赖，无框架、无构建工具） |
 | 存储 | 浏览器 localStorage（收藏、历史、主题偏好均存于本地） |
-| 在线源 | ZenQuotes / PoetryDB / Wikipedia（多源并发，最快优先） |
+| 在线源 | jinrishici.com（古诗词）/ ZenQuotes / PoetryDB（多源并发，最快优先） |
 | 翻译 | MyMemory Translation API |
 | 部署 | GitHub Pages |
 
