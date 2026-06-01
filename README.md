@@ -2,7 +2,7 @@
 
 > A zero-dependency web app delivering daily bilingual wisdom — quotes, classical Chinese poetry, and economics.
 
-> 每天为你推送双语（中英）名言、中国古典诗词与经济学知识的纯前端网页应用。
+> 每天为你推送双语（中英）名言、中国古典诗词与经济学知识的前端网页应用，现已支持接入本地大语言模型（LLM）进行智能知识创作。
 
 **在线访问 | Live demo:** https://sinvt.github.io/Quotum/
 
@@ -32,8 +32,8 @@
 | 📈 经济学模式 | Economics | 每日推送一则经济学概念或格言，附背景简介 |
 | 📅 每日推送 | Daily Pick | 基于日期的确定性算法，每天固定一条 |
 | ➕ 再来一条 | Show More | 手动浏览库中更多条目 |
-| 🎲 随机获取 | Random Fetch | 互联网实时获取 — 古诗用 jinrishici.com，名言/经济学用 ZenQuotes + PoetryDB 多源并发 |
-| 🔍 搜索 | Search | 按关键字在当前模式库中检索（模式隔离，名言不会搜出诗句） |
+| 🎲 随机获取 | Random Fetch | 优先调用本地 LLM 智能生成，后端未启动时平滑降级至互联网 API（jinrishici / ZenQuotes 等） |
+| 🔍 智能搜索 | AI Search | 支持调用 LLM 根据你的关键词即席创作知识卡片，失败则自动回退本地库搜索 |
 | ❤️ 收藏夹 | Favorites | 收藏喜欢的条目，三个模式各自独立 |
 | 🗂 历史记录 | History | 自动记录每日内容，可随时回看 |
 | ✏️ 手动添加 | Add Custom | 添加你自己的名言、诗词或知识条目 |
@@ -66,9 +66,10 @@ cd Quotum
 
 | 层 | Technology |
 |---|---|
-| 前端 | Vanilla HTML / CSS / JavaScript（零依赖，无框架、无构建工具） |
+| 前端 | Vanilla HTML / CSS / JavaScript（零依赖，无构建工具） |
+| 大模型支持 | 接入 `llama.cpp` 本地服务端（支持 Qwen3 等模型）进行实时推理 |
 | 存储 | 浏览器 localStorage（收藏、历史、主题偏好均存于本地） |
-| 在线源 | jinrishici.com（古诗词）/ ZenQuotes / PoetryDB（多源并发，最快优先） |
+| 在线源 | jinrishici.com / ZenQuotes / PoetryDB 等公网 API |
 | 翻译 | MyMemory Translation API |
 | 部署 | GitHub Pages |
 
@@ -76,12 +77,11 @@ cd Quotum
 
 ## 🎯 设计理念 | Design Principles
 
-- **零依赖** — 不需要 npm、框架或后端，一个 HTML 文件即是全部应用。
-- **离线优先** — 内置精选内容库，无网络也能正常使用。
-- **多源并发** — 联网时同时请求多个公开 API，最快返回者优先。
-- **隐私至上** — 所有数据仅保存在你的浏览器本地，不上传、不追踪。
+- **AI 加持，高可用兜底** — 优先调度本地大语言模型创作无尽内容，若未启动则无缝回退至静态库与公网 API。
+- **零依赖与离线优先** — 不需要 npm、框架或后端（除可选的 LLM 服务外），一个 HTML 文件即是全部核心应用。
+- **隐私至上** — 所有数据仅保存在你的浏览器本地，AI 推理在本地显卡完成，不上传、不追踪。
 
-> Zero dependencies · Offline-first · Multi-source concurrency · Privacy by default.
+> Local LLM Ready · High-Availability Fallback · Offline-first · Privacy by default.
 
 ---
 

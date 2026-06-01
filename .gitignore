@@ -1,0 +1,11 @@
+# Local LLM files
+llama.cpp/
+*.gguf
+*.zip
+start_api.bat
+download.bat
+download_llama.js
+
+# Dependencies & IDE
+node_modules/
+.vscode/

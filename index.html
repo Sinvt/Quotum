@@ -45,6 +45,10 @@
     --poetry-accent: rgba(200,160,100,0.65);
     --poetry-border: rgba(200,160,100,0.18);
     --api-border: rgba(100,200,255,0.15);
+    --ai-badge-color: #ffd700;
+    --ai-badge-shadow: rgba(255, 215, 0, 0.5);
+    --ai-card-border: rgba(255, 215, 0, 0.8);
+    --ai-card-shadow: rgba(255, 215, 0, 0.2);
   }
 
   body.light {
@@ -79,6 +83,10 @@
     --overlay-bg: rgba(0,0,0,0.4);
     --tab-active-bg: rgba(0,0,0,0.08);
     --tab-hover-bg: rgba(0,0,0,0.04);
+    --ai-badge-color: #d97706;
+    --ai-badge-shadow: rgba(217, 119, 6, 0.3);
+    --ai-card-border: rgba(217, 119, 6, 0.8);
+    --ai-card-shadow: rgba(217, 119, 6, 0.1);
   }
 
   body {
@@ -353,6 +361,15 @@
   .api-card .quote-cn { font-size: 1.2rem; line-height: 1.9; }
   .api-card .quote-en { font-size: 0.95rem; }
   .api-card .author { margin-top: 24px; }
+
+  .ai-card {
+    border-left: 3px solid var(--ai-card-border) !important;
+    box-shadow: 0 0 25px var(--ai-card-shadow);
+  }
+  .ai-card .badge {
+    color: var(--ai-badge-color) !important;
+    text-shadow: 0 0 10px var(--ai-badge-shadow);
+  }
 
   .search-hint { color: var(--text-muted); font-size: 0.72rem; text-align: center; margin-top: 2px; margin-bottom: 8px; }
 
@@ -745,7 +762,7 @@ function seededRand(seed) {
 function getDailyItem() {
   var today = new Date();
   var dateStr = today.toISOString().split('T')[0];
-  var seed = dateStr.replace(/-/g, '').split('').reduce(function(a,c) { return a + c.charCodeAt(0); }, 0);
+  var seed = parseInt(dateStr.replace(/-/g, ''), 10);
   var rand = seededRand(seed);
   var data = getData();
   return data[Math.floor(rand() * data.length)];
@@ -1019,6 +1036,7 @@ function addOnlineCard(q, badgeText, sourceName) {
   card.className = 'api-card';
   if (currentMode === 'economics') card.classList.add('eco-card');
   if (currentMode === 'poetry') card.classList.add('poetry-card');
+  if (badgeText === '✨ AI 实时生成') card.classList.add('ai-card');
   card.innerHTML = buildApiCardHTML(q, badgeText);
   var favBtn = makeFavBtn(q);
   favBtn.setAttribute('data-cn', q.cn);
@@ -1030,9 +1048,63 @@ function addOnlineCard(q, badgeText, sourceName) {
   updateStats(); updateBtnMore();
 }
 
-// ---- 🎲 随机 | 全模式从互联网实时获取 ----
+// ---- 🎲 本地大模型请求逻辑 ----
+async function fetchFromLocalLLM(query = null) {
+  setSearchHint('✨ AI 正在构思...');
+  var systemPrompt = '';
+  if (currentMode === 'poetry') {
+    systemPrompt = '你是一个精通中国古诗词的AI。请根据用户的要求生成一首经典的中国古诗，并提供英文翻译、作者/朝代、以及简短的赏析或背景简介。';
+  } else if (currentMode === 'economics') {
+    systemPrompt = '你是一个经济学教授。请根据用户的要求生成一条经典的经济学概念、理论或名言，并提供英文翻译、提出者、以及简短通俗的解释。';
+  } else {
+    systemPrompt = '你是一个博学的智者。请根据用户的要求生成一条名人名言，并提供英文翻译、作者、以及作者的简短生平或这句名言的背景。';
+  }
+  
+  var userPrompt = query ? '请根据关键词“' + query + '”生成切题的内容。' : '请随机生成一条内容。';
+  userPrompt += ' （内部随机扰动：' + Math.random() + '，请确保每次生成的内容角度不同）';
+
+  var reqBody = {
+    messages: [
+      { role: "system", content: systemPrompt + ' 必须严格返回如下JSON格式数据，不要有多余的话：{"cn": "中文", "en": "英文翻译", "author": "作者或朝代", "authorInfo": "简介"}' },
+      { role: "user", content: userPrompt }
+    ],
+    temperature: 0.7
+  };
+
+  var resp = await fetch('http://127.0.0.1:8080/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(reqBody),
+    signal: AbortSignal.timeout(15000)
+  });
+  
+  if (!resp.ok) throw new Error('LLM Server returned ' + resp.status);
+  
+  var data = await resp.json();
+  var contentStr = data.choices[0].message.content;
+  var jsonMatch = contentStr.match(/\{[\s\S]*\}/);
+  var parsed = JSON.parse(jsonMatch ? jsonMatch[0] : contentStr);
+  
+  if (!parsed.cn) throw new Error('Invalid JSON structure');
+  
+  addOnlineCard(parsed, '✨ AI 实时生成', 'Local LLM');
+  setSearchHint('✨ AI 生成完毕');
+}
+
+// ---- 🎲 随机 | 调度主入口 ----
 async function fetchRandomOnline() {
   showSpinner(true);
+  try {
+    await fetchFromLocalLLM();
+  } catch(e) {
+    console.warn('本地大模型请求失败，降级回退:', e);
+    await fetchFromExternalAPI();
+  }
+  showSpinner(false);
+}
+
+// ---- 🎲 随机 | 从互联网实时获取 (Fallback) ----
+async function fetchFromExternalAPI() {
   var gotFromWeb = false;
 
   if (currentMode === 'poetry') {
@@ -1126,14 +1198,24 @@ async function fetchRandomOnline() {
       } else { setSearchHint('本地条目均已浏览'); }
     }
   }
+}
+
+// ---- 🔍 搜索 | 调度主入口 ----
+async function searchQuotes() {
+  var query = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!query) return;
+  showSpinner(true);
+  try {
+    await fetchFromLocalLLM(query);
+  } catch(e) {
+    console.warn('本地大模型搜索失败，降级本地搜索:', e);
+    searchQuotesLocal(query);
+  }
   showSpinner(false);
 }
 
-// ---- 🔍 搜索 | 仅搜索当前模式库（不跨库） ----
-function searchQuotes() {
-  var query = document.getElementById('searchInput').value.trim().toLowerCase();
-  if (!query) return;
-
+// ---- 🔍 搜索 | 仅搜索当前模式库（Fallback） ----
+function searchQuotesLocal(query) {
   var data = getData();
   var seenInResults = {};
   var results = [];
