@@ -79,8 +79,8 @@ cd Quotum
 
 本项目在实现 AI 接入时，注重轻量化与稳定性，主要包含以下基础设计：
 
-- **硬件友好的本地部署 (Local Deployment)**：
-  针对家用显卡（如 8GB 显存），推荐使用 GGUF 格式配合 `llama.cpp`，在较低显存占用下实现大模型的 GPU 加速推理。
+- **本地部署起来比较友好 (Local Deployment)**：
+  由于本人自己设备是8GB显存的5070，所以采用这套方案，推荐使用 GGUF 格式配合 `llama.cpp`，在较低显存占用下实现大模型的 GPU 加速推理。
 
 - **轻量级提示词与结构化输出 (Lightweight Prompting)**：
   没有引入复杂的 Agent 框架，仅依靠原生 JavaScript 发起请求。通过 System Prompt 设定角色，要求模型直接返回严格的 JSON 格式数据以便于卡片渲染。
