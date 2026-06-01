@@ -69,24 +69,24 @@ cd Quotum
 1. **模型下载 (Model Download)**：
    推荐前往 Hugging Face 或 ModelScope 下载 **Qwen3-8B-Instruct** 的 GGUF 格式量化文件（例如 `qwen3-8b-instruct-q4_k_m.gguf`）。下载完成后，请直接将该模型文件放入项目的根目录中。
 2. **后端编译与启动 (Backend Compilation & Launch)**：
-   本项目底层与 `llama.cpp` 深度解耦但默契联动。请克隆 `llama.cpp` 官方仓库，并强制开启 CUDA 硬件加速进行编译（例如使用 `make GGML_CUDA=1`）。编译完成后，双击项目自带的 `start_api.bat`（Windows）或执行 `start_api.sh` 脚本以一键启动服务端。
-3. **端口与跨域配置 (Port & CORS)**：
-   本地 LLM 后端默认将在 `127.0.0.1:8080` 暴露完美兼容 OpenAI 规范的 API 接口。**注意**：在手动启动服务端时，必须携带 `--cors` 参数，以允许前端网页安全跨域连入并执行推理请求。
+   本项目与 `llama.cpp` 配合运行。请克隆 `llama.cpp` 官方仓库并开启 CUDA 编译（例如 `make GGML_CUDA=1`）。或者直接下载官方预编译版本，双击项目自带的 `start_api.bat` 一键启动服务端。
+3. **端口配置 (Port Settings)**：
+   本地 LLM 后端默认将在 `127.0.0.1:8080` 暴露兼容 OpenAI 规范的 API 接口，前端会自动连接该地址获取内容。
 
 ---
 
-## 🏗 架构与技术深度 | Architecture & Technical Depth
+## 🏗 架构简析 | Architecture Notes
 
-从重度工程与现代 AI 侧端应用的角度，本项目呈现了以下底层技术亮点：
+本项目在实现 AI 接入时，注重轻量化与稳定性，主要包含以下基础设计：
 
-- **极致的显存控制与硬件感知 (Hardware-Aware Optimization)**：
-  在严格受限的 8GB 显存（如 RTX 5070）物理红线内，系统通过死磕 4-bit/5-bit 高性能量化技术（GGUF），将模型全量卸载（Offload）到 GPU 上。在极致压榨显存空间的同时，为长文本留出充裕的 KV Cache 空间，从而在单批次推理中榨干硬件算力，实现极低的首字延迟（TTFT）与惊艳的吞吐率。这种在受限硬件环境下追求极致执行效率的逻辑，与边缘计算或卫星端低级硬件加速的调优思想完全契合。
+- **硬件友好的本地部署 (Local Deployment)**：
+  针对家用显卡（如 8GB 显存），推荐使用 GGUF 格式配合 `llama.cpp`，在较低显存占用下实现大模型的 GPU 加速推理。
 
-- **轻量级单 Agent 编排与结构化对齐 (Lightweight Agent Orchestration)**：
-  项目果断摒弃了臃肿的外部 Agent 编排框架，由前端纯原生 JavaScript 直接充当轻量级的 Agent 意图识别与调度节点。底层注入了极其严密的 System Prompt（角色设定），让模型扮演“内容主编”，自主进行意图路由（智能判断当前处于名言、经济学还是古诗模式），并施加强力的输出格式约束，迫使大模型在不浪费多余 Token 说废话的前提下，百分之百稳定吐出严格契合前端卡片渲染架构的纯净 JSON 数据。
+- **轻量级提示词与结构化输出 (Lightweight Prompting)**：
+  没有引入复杂的 Agent 框架，仅依靠原生 JavaScript 发起请求。通过 System Prompt 设定角色，要求模型直接返回严格的 JSON 格式数据以便于卡片渲染。
 
-- **前瞻性高可用容灾解耦 (Graceful Degradation & Fallback)**：
-  系统在网络层具备工业级稳健的容灾机制。前端调度器在被触发时，会优先向本地高性能 LLM 发起推理请求（成功渲染时将被赋予专属的 `✨ AI 实时生成` 视觉标识与动态发光 UI）。一旦底层 fetch 捕获到服务未启动、连接拒绝或超时等异常，系统会在毫秒级瞬间触发平滑降级（Fallback）策略，无缝切回内置的静态精选库或传统的公网 API。这种前瞻性的绝对解耦设计，确保了应用在任何极端环境下的绝对可用性。
+- **平滑降级机制 (Graceful Fallback)**：
+  前端在请求本地 LLM 失败（例如服务未开启或请求超时）时，会自动拦截异常并无缝回退至原有的公网 API 或本地静态数据库，保证应用始终可用。
 
 ---
 
